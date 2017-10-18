@@ -112,6 +112,8 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrameView\FrameView.cs" />
+    <Compile Include="FrameView\InfraredFrameView.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

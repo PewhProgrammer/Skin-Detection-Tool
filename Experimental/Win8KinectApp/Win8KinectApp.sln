@@ -9,13 +9,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Win8KinectApp.Shared", "Win
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win8KinectApp.Windows", "Win8KinectApp\Win8KinectApp.Windows\Win8KinectApp.Windows.csproj", "{451A0D5A-AD92-4E90-965F-D2319E459A24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win8KinectApp.WindowsPhone", "Win8KinectApp\Win8KinectApp.WindowsPhone\Win8KinectApp.WindowsPhone.csproj", "{E664AE18-4EA1-4517-884D-6C0AC06A801F}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Win8KinectApp\Win8KinectApp.Shared\Win8KinectApp.Shared.projitems*{451a0d5a-ad92-4e90-965f-d2319e459a24}*SharedItemsImports = 4
 		Win8KinectApp\Win8KinectApp.Shared\Win8KinectApp.Shared.projitems*{87e7ca1a-e5b9-436c-bdbe-311d7ba1ffcb}*SharedItemsImports = 13
-		Win8KinectApp\Win8KinectApp.Shared\Win8KinectApp.Shared.projitems*{e664ae18-4ea1-4517-884d-6c0ac06a801f}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,30 +49,6 @@ Global
 		{451A0D5A-AD92-4E90-965F-D2319E459A24}.Release|x86.ActiveCfg = Release|x86
 		{451A0D5A-AD92-4E90-965F-D2319E459A24}.Release|x86.Build.0 = Release|x86
 		{451A0D5A-AD92-4E90-965F-D2319E459A24}.Release|x86.Deploy.0 = Release|x86
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|ARM.ActiveCfg = Debug|ARM
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|ARM.Build.0 = Debug|ARM
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|ARM.Deploy.0 = Debug|ARM
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|x64.Build.0 = Debug|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|x64.Deploy.0 = Debug|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|x86.ActiveCfg = Debug|x86
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|x86.Build.0 = Debug|x86
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Debug|x86.Deploy.0 = Debug|x86
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|ARM.ActiveCfg = Release|ARM
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|ARM.Build.0 = Release|ARM
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|ARM.Deploy.0 = Release|ARM
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|x64.ActiveCfg = Release|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|x64.Build.0 = Release|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|x64.Deploy.0 = Release|Any CPU
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|x86.ActiveCfg = Release|x86
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|x86.Build.0 = Release|x86
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +56,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{87E7CA1A-E5B9-436C-BDBE-311D7BA1FFCB} = {E9BD830A-8A7B-4736-9CF9-8EB0615AECB2}
 		{451A0D5A-AD92-4E90-965F-D2319E459A24} = {E9BD830A-8A7B-4736-9CF9-8EB0615AECB2}
-		{E664AE18-4EA1-4517-884D-6C0AC06A801F} = {E9BD830A-8A7B-4736-9CF9-8EB0615AECB2}
 	EndGlobalSection
 EndGlobal
