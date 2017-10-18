@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>e664ae18-4ea1-4517-884d-6c0ac06a801f</ProjectGuid>
+    <ProjectGuid>{E664AE18-4EA1-4517-884D-6C0AC06A801F}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Win8KinectApp</RootNamespace>

@@ -13,10 +13,12 @@ namespace Win8KinectApp
         public enum FrameType
         {
             Infrared,
-            Color
+            Color,
+            BodyMask,
+            ColorInfrared
         }
 
-        private static FrameType DEFAULT_FRAMETYPE = FrameType.Infrared;
+        private static FrameType DEFAULT_FRAMETYPE = FrameType.BodyMask;
        
         public MainPage()
         {
@@ -33,14 +35,22 @@ namespace Win8KinectApp
             switch (display)
             {
                 case FrameType.Infrared:
-                    frame = new InfraredFrameView(FrameDisplayImage);
+                    frame = new InfraredFrameView(FrameDisplayImage0);
                     break;
                 case FrameType.Color:
+                    frame = new ColorFrameView(FrameDisplayImage0);
+                    break;
+                case FrameType.BodyMask:
+                    frame = new BodyMaskFrameView(FrameDisplayImage0);
+                    break;
+                case FrameType.ColorInfrared:
+                    frame = new ColorFrameView(FrameDisplayImage0);
+                    Loaded += new InfraredFrameView(FrameDisplayImage1).MainPage_Loaded;
+                    Unloaded += new InfraredFrameView(FrameDisplayImage1).MainPage_Unloaded;
                     break;
                 default:
                     System.Diagnostics.Debug.WriteLine("Something went wrong. Cancelling...");
                     return;
-                    break;
             }
 
             Loaded += frame.MainPage_Loaded;

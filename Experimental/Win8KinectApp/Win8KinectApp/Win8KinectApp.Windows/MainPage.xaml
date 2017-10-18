@@ -16,9 +16,13 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" 
                 Style="{StaticResource SubheaderTextBlockStyle}"
-                       Text="Kinect For Windows 2"/>
-            <Image x:Name="FrameDisplayImage" Grid.Row="1" 
-                Stretch="Uniform"/>
+                       Text="3D Scan Tool - Prototyping"/>
+            <Image x:Name="FrameDisplayImage0" Grid.Row="1" 
+                Stretch="Uniform" Margin="0,94,721,54"/>
+
+            <Image x:Name="FrameDisplayImage1" Grid.Row="1" 
+                Stretch="Uniform" Margin="681,94,47,54"/>
+            <Button Content="Start 3D Scan" HorizontalAlignment="Left" Margin="558,7,0,0" VerticalAlignment="Top" Height="53" Width="167" Grid.Row="2"/>
         </Grid>
     </Grid>
 </Page>

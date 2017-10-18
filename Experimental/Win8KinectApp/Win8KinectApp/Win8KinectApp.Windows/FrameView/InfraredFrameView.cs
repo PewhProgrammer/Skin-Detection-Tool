@@ -26,8 +26,6 @@ namespace Win8KinectApp
     class InfraredFrameView : FrameView
     {
 
-        private KinectSensor sensor;
-
         // Size of the RGB pixel in the bitmap
         private const int BytesPerPixel = 4;
 
