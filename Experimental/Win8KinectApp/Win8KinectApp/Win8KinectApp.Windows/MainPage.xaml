@@ -24,5 +24,9 @@
                 Stretch="Uniform" Margin="681,94,47,54"/>
             <Button Content="Start 3D Scan" HorizontalAlignment="Left" Margin="558,7,0,0" VerticalAlignment="Top" Height="53" Width="167" Grid.Row="2"/>
         </Grid>
+        
+        
     </Grid>
+    
+
 </Page>

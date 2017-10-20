@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="1f723430-d543-4896-9d7c-de99415a299e" Publisher="CN=Thinh-Laptop" Version="1.2.0.0" />
+  <Identity Name="1f723430-d543-4896-9d7c-de99415a299e" Publisher="CN=Thinh-Laptop" Version="1.4.0.0" />
   <Properties>
     <DisplayName>Win8KinectApp.Windows</DisplayName>
     <PublisherDisplayName>Thinh-Laptop</PublisherDisplayName>

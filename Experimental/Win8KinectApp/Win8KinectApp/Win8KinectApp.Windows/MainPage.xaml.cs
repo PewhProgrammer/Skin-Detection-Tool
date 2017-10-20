@@ -1,7 +1,11 @@
 ﻿
 using Windows.UI.Xaml.Controls;
 using Win8KinectApp.FrameKinectView;
+using System.Windows.Input;
+
+
 using System;
+using System.Windows;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -16,45 +20,51 @@ namespace Win8KinectApp
             Color,
             BodyMask,
             ColorInfrared
+
         }
+
+        
 
         private static FrameType DEFAULT_FRAMETYPE = FrameType.BodyMask;
        
         public MainPage()
         {
             this.InitializeComponent();
+
             setupCurrentDisplay(DEFAULT_FRAMETYPE); 
         }
 
         private void setupCurrentDisplay(FrameType display)
         {
-            FrameView frame = null;
-
-            System.Diagnostics.Debug.WriteLine("hey");
-
+            
             switch (display)
             {
                 case FrameType.Infrared:
-                    frame = new InfraredFrameView(FrameDisplayImage0);
+                    addDisplay(new InfraredFrameView(FrameDisplayImage0));
                     break;
                 case FrameType.Color:
-                    frame = new ColorFrameView(FrameDisplayImage0);
+                    addDisplay(new ColorFrameView(FrameDisplayImage0));
                     break;
                 case FrameType.BodyMask:
-                    frame = new BodyMaskFrameView(FrameDisplayImage0);
+                    addDisplay(new BodyMaskFrameView(FrameDisplayImage0));
+                    addDisplay(new ColorFrameView(FrameDisplayImage1));
                     break;
                 case FrameType.ColorInfrared:
-                    frame = new ColorFrameView(FrameDisplayImage0);
-                    Loaded += new InfraredFrameView(FrameDisplayImage1).MainPage_Loaded;
-                    Unloaded += new InfraredFrameView(FrameDisplayImage1).MainPage_Unloaded;
+                    addDisplay(new ColorFrameView(FrameDisplayImage1));
+                    addDisplay(new InfraredFrameView(FrameDisplayImage0));
                     break;
                 default:
                     System.Diagnostics.Debug.WriteLine("Something went wrong. Cancelling...");
                     return;
             }
 
-            Loaded += frame.MainPage_Loaded;
-            Unloaded += frame.MainPage_Unloaded;
+
+        }
+
+        private void addDisplay(FrameView fr)
+        {
+            Loaded += fr.MainPage_Loaded;
+            Unloaded += fr.MainPage_Unloaded;
         }
 
 
