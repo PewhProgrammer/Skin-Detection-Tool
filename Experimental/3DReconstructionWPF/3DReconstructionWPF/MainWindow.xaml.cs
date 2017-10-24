@@ -85,8 +85,12 @@ namespace _3DReconstructionWPF
             PointCloudView pcv = new PointCloudView(rend);
 
             Point3DCollection depthPoints = pcv.getDepthDataFromLatestFrame();
-            if(depthPoints != null)
-            rend.CreatePointCloud(depthPoints);
+            if (depthPoints != null)
+            {
+                rend.CreatePointCloud(depthPoints);
+                Log.writeLog("Analysing process finished.");
+            }
+            else Log.writeLog("Could not retrieve depth frame");
 
             /*int runs = 1;
 
@@ -104,7 +108,7 @@ namespace _3DReconstructionWPF
 
 
 
-            Log.writeLog("Analysing process finished.");
+            //Log.writeLog("Analysing process finished.");
 
         }
 

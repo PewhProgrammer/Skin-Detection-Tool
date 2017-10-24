@@ -52,7 +52,7 @@ namespace _3DReconstructionWPF.FrameKinectView
                 multiSourceFrameReader = sensor.OpenMultiSourceFrameReader(
                     FrameSourceTypes.Depth | FrameSourceTypes.Color);
 
-                multiSourceFrameReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
+                //multiSourceFrameReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
 
 
                 sensor.Open();
@@ -145,7 +145,6 @@ namespace _3DReconstructionWPF.FrameKinectView
             Log.writeLog("Max Pointcloud Points: (" + xMax + ", " + yMax + ", " + zMax + ")");
             //min reaches until - inifinity
             Log.writeLog("Min Pointcloud Points: (" + xMin + ", " + yMin + ", " + zMin + ")");
-            renderer.CreatePointCloud(points);
             return points;
         }
     }
