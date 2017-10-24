@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_3DReconstructionWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280">
-    <Grid Background="DarkSlateGray" Margin="0,0,2,-21">
+        Title="MainWindow" Height="769" Width="1280">
+    <Grid Background="DarkSlateGray" Margin="0,0,2,-3">
 
 
         <Border  
@@ -48,11 +48,11 @@
            Background="Black"
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
-   Width="531"  
+   Width="555"  
    Height="399" Margin="691,78,0,0">
 
             <Image x:Name="FrameDisplayImage" Grid.Row="1" 
-                Stretch="Uniform" Margin="0,9,9,9"/>
+                Stretch="Uniform" Margin="0,-1,-1,-1"/>
         </Border>
 
 
@@ -60,9 +60,14 @@
 
 
 
-        <Label x:Name="label" Content="3D Reconstruction Tool"  FontSize="14" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <Button x:Name="button" Content="Start Scan"  Click="startScan_Click" HorizontalAlignment="Left" Margin="40,621,0,0" VerticalAlignment="Top" Width="171" Height="47"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="161" Margin="691,507,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="531"/>
+        <Label x:Name="label" FontWeight="Bold" Content="3D Reconstruction Tool"  FontSize="18" HorizontalAlignment="Left" Margin="40,19,0,0" VerticalAlignment="Top" Width="228" Height="36"/>
+        <Button x:Name="button" Content="Start Scan"  Click="startScan_Click" HorizontalAlignment="Left" Margin="40,635,0,0" VerticalAlignment="Top" Width="171" Height="47"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="148" Margin="691,558,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="555" TextChanged="textBox_TextChanged"/>
+        <Canvas Background="Gray" HorizontalAlignment="Left" Height="55" Margin="40,477,0,0" VerticalAlignment="Top" Width="555"/>
+        <Label x:Name="label_Copy" Content="Computated Point Cloud"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="160,482,0,0" VerticalAlignment="Top" Height="50" Width="338"/>
+        <Canvas Background="Gray" HorizontalAlignment="Left" Height="55" Margin="691,477,0,0" VerticalAlignment="Top" Width="555"/>
+        <Label x:Name="label_Copy1" Content="Kinect Color View"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="856,482,0,0" VerticalAlignment="Top" Height="50" Width="226"/>
+        <Label x:Name="label_Cycle" Content="" Foreground="Yellow"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="475,445,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
 
     </Grid>
 </Window>

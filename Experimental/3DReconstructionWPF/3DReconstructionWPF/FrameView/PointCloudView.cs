@@ -13,6 +13,8 @@ namespace _3DReconstructionWPF.FrameKinectView
 
         private MultiSourceFrameReader multiSourceFrameReader;
         private CoordinateMapper cM;
+
+
         public override void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             this.sensor = KinectSensor.GetDefault();
@@ -62,12 +64,27 @@ namespace _3DReconstructionWPF.FrameKinectView
             DepthFrameReference depthFrameReference = frame.DepthFrameReference;
             DepthFrame depthFrame = depthFrameReference.AcquireFrame();
 
-            
-            depthFrame.Dispose(); // dont know if it works
+            int height = depthFrame.FrameDescription.Height;
+            int width = depthFrame.FrameDescription.Width;
+
+            CameraSpacePoint[] depth2xyz = new CameraSpacePoint[height * width];
+
+
+
+
+
+            ushort[] depthFrameData = null;
+            depthFrame.CopyFrameDataToArray(depthFrameData);
+
+            //depthFrame.Dispose(); // dont know if it works
 
             // Process depth frame data...
-            
-            //cM.MapDepthFrameToCameraSpace();
+            cM.MapDepthFrameToCameraSpace(depthFrameData,depth2xyz);
+
+            for(int i = 0; i < width*height; i++)
+            {
+
+            }
         }
     }
 }

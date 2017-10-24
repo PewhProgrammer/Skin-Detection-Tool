@@ -14,8 +14,6 @@ namespace _3DReconstructionWPF.FrameKinectView
         // Size of the RGB pixel in the bitmap
         private const int BytesPerPixel = 4;
 
-        private WriteableBitmap bitmap = null;
-
         private ColorFrameReader colorFrameReader = null;
 
         Image frameDisplayImage;
