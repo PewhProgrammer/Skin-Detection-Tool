@@ -13,7 +13,6 @@ namespace _3DReconstructionWPF.GUI
 {
     class Renderer
     {
-        private MeshGeometry3D pointCloudMesh;
         private Model3DGroup group;
 
         public Renderer(Model3DGroup group)
@@ -24,16 +23,16 @@ namespace _3DReconstructionWPF.GUI
 
         public void CreatePointCloud(Point3DCollection points)
         {
-            pointCloudMesh = new MeshGeometry3D();
+            MeshGeometry3D pointCloudMesh = new MeshGeometry3D();
             int step = points.Count / 100;
 
             for (int i = 0; i < points.Count; i++)
             {
                 //System.Threading.Thread.Sleep(1);
                 //Log.writeLog("Point created: (" + points[i].X+","+points[i].Y+","+points[i].Z+")");
-                if (i <1650 || i > 3400)
-                AddCubeToMesh(pointCloudMesh, points[i], 0.005);
 
+                
+                AddCubeToMesh(pointCloudMesh, points[i], 0.0005f);
 
                 if (i > step)
                 {

@@ -47,7 +47,6 @@ namespace _3DReconstructionWPF
 
         private void setupCurrentDisplay(FrameType display)
         {
-            
 
             switch (display)
             {
@@ -66,16 +65,12 @@ namespace _3DReconstructionWPF
             }
         }
 
-        private void addDisplay(FrameView fr)
-        {
-            Loaded += fr.MainPage_Loaded;
-            Unloaded += fr.MainPage_Unloaded;
-        }
-
         private void init()
         {
             InitializeComponent();
             Log.initLog(textBox);
+
+            rend = new Renderer(group);
 
             //KinectSensor sensor = KinectSensor.GetDefault();
             //sensor.Open();
@@ -87,11 +82,13 @@ namespace _3DReconstructionWPF
         {
             Log.writeLog("Fetching kinect data...");
 
-            addDisplay(new PointCloudView()); //start pointcloud processing
+            PointCloudView pcv = new PointCloudView(rend);
 
-            rend = new Renderer(group);
+            Point3DCollection depthPoints = pcv.getDepthDataFromLatestFrame();
+            if(depthPoints != null)
+            rend.CreatePointCloud(depthPoints);
 
-            int runs = 10;
+            /*int runs = 1;
 
 
             for (int i = 0; i <= runs; i++)
@@ -103,12 +100,18 @@ namespace _3DReconstructionWPF
                 label_Cycle.Content = "cycle: " + i + " out of " + runs;
 
                 System.Windows.Forms.Application.DoEvents();
-            }
+            }*/
 
 
 
             Log.writeLog("Analysing process finished.");
 
+        }
+
+        private void addDisplay(FrameView fr)
+        {
+            Loaded += fr.MainPage_Loaded;
+            Unloaded += fr.MainPage_Unloaded;
         }
 
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
