@@ -22,6 +22,7 @@ namespace _3DReconstructionWPF
             
             if(LogArea != null)
             LogArea.AppendText(DateTime.Now.TimeOfDay.Hours +":"+ DateTime.Now.TimeOfDay.Minutes + " >> " + s+"\n");
+            //System.Windows.Forms.Application.DoEvents();
         }
     }
 }

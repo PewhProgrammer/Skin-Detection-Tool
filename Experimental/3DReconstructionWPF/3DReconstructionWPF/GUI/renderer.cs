@@ -14,6 +14,7 @@ namespace _3DReconstructionWPF.GUI
     class Renderer
     {
         private Model3DGroup group;
+        MeshGeometry3D pointCloudMesh;
 
         public Renderer(Model3DGroup group)
         {
@@ -23,9 +24,7 @@ namespace _3DReconstructionWPF.GUI
 
         public void CreatePointCloud(Point3DCollection points)
         {
-            MeshGeometry3D pointCloudMesh = new MeshGeometry3D();
-            int step = points.Count / 100;
-
+            pointCloudMesh = new MeshGeometry3D();
             for (int i = 0; i < points.Count; i++)
             {
                 //System.Threading.Thread.Sleep(1);
@@ -33,22 +32,13 @@ namespace _3DReconstructionWPF.GUI
 
                 
                 AddCubeToMesh(pointCloudMesh, points[i], 0.0005f);
-
-                if (i > step)
-                {
-                    //group.Children.Clear();
-                    step += step;
-                    GeometryModel3D mGeometry1 = new GeometryModel3D(pointCloudMesh, new DiffuseMaterial(Brushes.YellowGreen));
-                    mGeometry1.Transform = new Transform3DGroup();
-                    group.Children.Add(mGeometry1);
-                    System.Windows.Forms.Application.DoEvents();
-                }
             }
             Log.writeLog(points.Count + " vertices found");
 
             pointCloudMesh.Freeze();
 
-
+            //group.Children.Clear();
+            //group.Children.
             GeometryModel3D mGeometry = new GeometryModel3D(pointCloudMesh, new DiffuseMaterial(Brushes.YellowGreen));
             mGeometry.Transform = new Transform3DGroup();
             group.Children.Add(mGeometry);

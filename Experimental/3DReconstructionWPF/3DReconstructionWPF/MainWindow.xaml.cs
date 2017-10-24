@@ -36,7 +36,12 @@ namespace _3DReconstructionWPF
         private Renderer rend;
         private static FrameType DEFAULT_FRAMETYPE = FrameType.Color;
 
+        private int runs = -1;
+        private int cycleRuns = 0;
+
         private FrameView currentFrameView;
+
+        private PointCloudView pcv;
 
         public MainWindow()
         {
@@ -72,6 +77,8 @@ namespace _3DReconstructionWPF
 
             rend = new Renderer(group);
 
+           pcv = new PointCloudView(rend);
+
             //KinectSensor sensor = KinectSensor.GetDefault();
             //sensor.Open();
 
@@ -82,17 +89,18 @@ namespace _3DReconstructionWPF
         {
             Log.writeLog("Fetching kinect data...");
 
-            PointCloudView pcv = new PointCloudView(rend);
-
             Point3DCollection depthPoints = pcv.getDepthDataFromLatestFrame();
             if (depthPoints != null)
             {
+
                 rend.CreatePointCloud(depthPoints);
                 Log.writeLog("Analysing process finished.");
+                cycleRuns++;
+                label_Cycle.Content = "cycle: " + cycleRuns + " out of " + runs;
             }
             else Log.writeLog("Could not retrieve depth frame");
 
-            /*int runs = 1;
+            /*
 
 
             for (int i = 0; i <= runs; i++)

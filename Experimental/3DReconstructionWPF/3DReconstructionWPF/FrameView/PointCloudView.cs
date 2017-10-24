@@ -85,7 +85,14 @@ namespace _3DReconstructionWPF.FrameKinectView
 
         public Point3DCollection getDepthDataFromLatestFrame()
         {
-            MultiSourceFrame frame = multiSourceFrameReader.AcquireLatestFrame();
+            int i = 0;
+            MultiSourceFrame frame = null;
+            while(frame == null || i < 1000)
+            {
+                frame = multiSourceFrameReader.AcquireLatestFrame();
+                i++;
+            }
+
             if(frame != null)
             return getDepthData(frame);
 
@@ -94,7 +101,9 @@ namespace _3DReconstructionWPF.FrameKinectView
 
             Point3DCollection getDepthData(MultiSourceFrame frame)
         {
-           
+            Log.writeLog("captured Frame");
+            
+
             DepthFrameReference depthFrameReference = frame.DepthFrameReference;
             DepthFrame depthFrame = depthFrameReference.AcquireFrame();
 
@@ -135,6 +144,7 @@ namespace _3DReconstructionWPF.FrameKinectView
                 if (p.Y < yMin) yMin = p.Y;
                 if (p.Z < zMin) zMin = p.Z;
 
+                if(p.X > -10 && p.Y > -10 && p.Z > -100)
                 points.Add(new Point3D(p.X, p.Y, p.Z));
 
 
