@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-
-using System.Windows.Media;
 
 using System.Windows.Media.Media3D;
 using Microsoft.Kinect;
 using _3DReconstructionWPF.GUI;
 using _3DReconstructionWPF.FrameKinectView;
 
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 
 
@@ -40,8 +34,10 @@ namespace _3DReconstructionWPF
         private int cycleRuns = 0;
 
         private FrameView currentFrameView;
-
         private PointCloudView pcv;
+
+        private Transform3D cameraFoval = new TranslateTransform3D(new Vector3D(0, 0, 0));
+        private Point3D cameraPosition = new Point3D(0.2, 0.2, 5);
 
         public MainWindow()
         {
@@ -60,7 +56,7 @@ namespace _3DReconstructionWPF
                 case FrameType.Color:
                     Log.writeLog("Creating color image.");
                     currentFrameView = new ColorView(FrameDisplayImage);
-                    addDisplay(currentFrameView);
+                    AddDisplay(currentFrameView);
                     break;
                 case FrameType.BodyMask:
                     break;
@@ -78,10 +74,6 @@ namespace _3DReconstructionWPF
             rend = new Renderer(group);
 
            pcv = new PointCloudView(rend);
-
-            //KinectSensor sensor = KinectSensor.GetDefault();
-            //sensor.Open();
-
         }
 
 
@@ -100,35 +92,37 @@ namespace _3DReconstructionWPF
             }
             else Log.writeLog("Could not retrieve depth frame");
 
-            /*
-
-
-            for (int i = 0; i <= runs; i++)
-            {
-                System.Threading.Thread.Sleep(100);
-                Point3DCollection points = rend.ReadData();
-                rend.CreatePointCloud(points);
-
-                label_Cycle.Content = "cycle: " + i + " out of " + runs;
-
-                System.Windows.Forms.Application.DoEvents();
-            }*/
-
-
-
-            //Log.writeLog("Analysing process finished.");
-
         }
 
-        private void addDisplay(FrameView fr)
+        private void AddDisplay(FrameView fr)
         {
             Loaded += fr.MainPage_Loaded;
             Unloaded += fr.MainPage_Unloaded;
         }
 
-        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void RotateLeft_Click(object sender, RoutedEventArgs e)
+        {
+            viewport.Camera.Transform = cameraFoval;
+        }
+
+        private void RotateRight_Click(object sender, RoutedEventArgs e)
         {
 
+            //5 is computated euclid distance between zero point and default camera position
+
+            double newX = 5 * Math.Cos(90);
+            double newY = 5 * Math.Sin(90);
+
+            Point3D newPos = new Point3D(newX, 0, newY);
+
+            Transform3D cameraTranslation = new TranslateTransform3D(new Point3D(newX, 0, newY) - cameraPosition);
+            viewport.Camera.Transform = cameraTranslation;
+
+            Log.writeLog("vec: " + (new Point3D(newX, 0, newY) - cameraPosition).ToString());
+            Log.writeLog("new pos: " + newPos.ToString());
+
+            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), 98));
+            viewport.Camera.Transform = cameraRotation;
         }
     }
 }

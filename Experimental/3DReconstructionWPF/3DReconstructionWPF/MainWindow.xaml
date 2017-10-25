@@ -62,12 +62,14 @@
 
         <Label x:Name="label" FontWeight="Bold" Content="3D Reconstruction Tool"  FontSize="18" HorizontalAlignment="Left" Margin="40,19,0,0" VerticalAlignment="Top" Width="228" Height="36"/>
         <Button x:Name="button" Content="Start Scan"  Click="startScan_Click" HorizontalAlignment="Left" Margin="40,635,0,0" VerticalAlignment="Top" Width="171" Height="47"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="148" Margin="691,558,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="555" TextChanged="textBox_TextChanged"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="148" Margin="691,558,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="555"/>
         <Canvas Background="Gray" HorizontalAlignment="Left" Height="55" Margin="40,477,0,0" VerticalAlignment="Top" Width="555"/>
         <Label x:Name="label_Copy" Content="Computated Point Cloud"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="160,482,0,0" VerticalAlignment="Top" Height="50" Width="338"/>
         <Canvas Background="Gray" HorizontalAlignment="Left" Height="55" Margin="691,477,0,0" VerticalAlignment="Top" Width="555"/>
         <Label x:Name="label_Copy1" Content="Kinect Color View"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="856,482,0,0" VerticalAlignment="Top" Height="50" Width="226"/>
         <Label x:Name="label_Cycle" Content="" Foreground="Yellow"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="475,445,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
+        <Button x:Name="button_Copy" Content="Rotate Right"  Click="RotateRight_Click" HorizontalAlignment="Left" Margin="238,558,0,0" VerticalAlignment="Top" Width="171" Height="47"/>
+        <Button x:Name="button_Copy1" Content="Rotate Left"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="40,558,0,0" VerticalAlignment="Top" Width="171" Height="47"/>
 
     </Grid>
 </Window>

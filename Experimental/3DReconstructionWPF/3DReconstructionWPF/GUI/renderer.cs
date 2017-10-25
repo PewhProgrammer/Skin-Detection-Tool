@@ -19,11 +19,13 @@ namespace _3DReconstructionWPF.GUI
         public Renderer(Model3DGroup group)
         {
             this.group = group;
-            createAxis();
+            CreateAxis();
         }
 
         public void CreatePointCloud(Point3DCollection points)
         {
+            if(group.Children.Count == 6)
+            group.Children.RemoveAt(5);
             pointCloudMesh = new MeshGeometry3D();
             for (int i = 0; i < points.Count; i++)
             {
@@ -31,7 +33,7 @@ namespace _3DReconstructionWPF.GUI
                 //Log.writeLog("Point created: (" + points[i].X+","+points[i].Y+","+points[i].Z+")");
 
                 
-                AddCubeToMesh(pointCloudMesh, points[i], 0.0005f);
+                AddCubeToMesh(pointCloudMesh, points[i], 0.0008f);
             }
             Log.writeLog(points.Count + " vertices found");
 
@@ -44,45 +46,45 @@ namespace _3DReconstructionWPF.GUI
             group.Children.Add(mGeometry);
         }
 
-        private void createAxis()
+        private void CreateAxis()
         {
             MeshGeometry3D axisMesh = new MeshGeometry3D();
             //x-axis
-            for (int i = -100; i < 100; i++)
+            for (int i = -60; i < 70; i++)
             {
                 Point3D point = new Point3D(i / 30.0f, 0, 0);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
                 AddCubeToMesh(axisMesh, point, 0.005);
             }
 
-            addToScene(axisMesh, Brushes.Red);
+            AddToScene(axisMesh, Brushes.Red);
             axisMesh = new MeshGeometry3D();
 
             //y-axis
-            for (int i = -100; i < 100; i++)
+            for (int i = -60; i < 60; i++)
             {
                 Point3D point = new Point3D(0, i / 30.0f, 0);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
                 AddCubeToMesh(axisMesh, point, 0.005);
             }
 
-            addToScene(axisMesh, Brushes.Green);
+            AddToScene(axisMesh, Brushes.Green);
 
             axisMesh = new MeshGeometry3D();
 
             //z-axis
-            for (int i = -5; i < 5; i++)
+            for (int i = -8; i < 8; i++)
             {
-                Point3D point = new Point3D(0, 0, i / 1.0f);
+                Point3D point = new Point3D(0, 0, i);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
                 AddCubeToMesh(axisMesh, point, 0.005);
             }
 
-            addToScene(axisMesh, Brushes.Blue);
+            AddToScene(axisMesh, Brushes.Blue);
 
         }
 
-        private void addToScene(MeshGeometry3D mesh, Brush k)
+        private void AddToScene(MeshGeometry3D mesh, Brush k)
         {
             GeometryModel3D mGeometry = new GeometryModel3D(mesh, new DiffuseMaterial(k));
             mGeometry.Transform = new Transform3DGroup();
