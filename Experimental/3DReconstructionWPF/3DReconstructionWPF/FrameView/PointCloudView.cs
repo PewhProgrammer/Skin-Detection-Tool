@@ -137,7 +137,7 @@ namespace _3DReconstructionWPF.FrameKinectView
             {
                 CameraSpacePoint p = depth2xyz[i];
 
-                if (p.X > -2 && p.Y > -2 && p.Z > 0 && p.X < 3 && p.Y < 3 && p.Z < 10)
+                if (p.X > -2 && p.Y > -2 && p.Z > 0 && p.X < 3 && p.Y < 3 && p.Z < 2)
                     points.Add(new Point3D(p.X, p.Y, p.Z));
                 else continue;
                 if (p.X > xMax) xMax = p.X;

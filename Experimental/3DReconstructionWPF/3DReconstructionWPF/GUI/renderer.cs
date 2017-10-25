@@ -73,9 +73,9 @@ namespace _3DReconstructionWPF.GUI
             axisMesh = new MeshGeometry3D();
 
             //z-axis
-            for (int i = -8; i < 8; i++)
+            for (int i = -60; i < 60; i++)
             {
-                Point3D point = new Point3D(0, 0, i);
+                Point3D point = new Point3D(0, 0, i/5.0f);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
                 AddCubeToMesh(axisMesh, point, 0.005);
             }

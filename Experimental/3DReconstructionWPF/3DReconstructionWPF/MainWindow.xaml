@@ -25,7 +25,7 @@
 
         NearPlaneDistance="0" LookDirection="0,0,-10" UpDirection="0,1,0"
 
-            Position="0.2,0.2,5" FieldOfView="45" />
+            Position="0.2,0.2,3.3" FieldOfView="45" />
                 </Viewport3D.Camera>
 
                 <ModelVisual3D x:Name="model">
@@ -33,9 +33,13 @@
                         <Model3DGroup x:Name="group">
                             <AmbientLight Color="DarkGray" />
                             <DirectionalLight Color="White" Direction="-5,-5,-7" />
+                            
+                            
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
+                
+                
 
 
             </Viewport3D>

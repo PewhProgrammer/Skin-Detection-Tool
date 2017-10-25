@@ -39,6 +39,8 @@ namespace _3DReconstructionWPF
         private Transform3D cameraFoval = new TranslateTransform3D(new Vector3D(0, 0, 0));
         private Point3D cameraPosition = new Point3D(0.2, 0.2, 5);
 
+        private float rotateValue = 5;
+
         public MainWindow()
         {
             init();
@@ -102,12 +104,16 @@ namespace _3DReconstructionWPF
 
         private void RotateLeft_Click(object sender, RoutedEventArgs e)
         {
-            viewport.Camera.Transform = cameraFoval;
+            rotateValue -= 5f;
+            //viewport.Camera.Transform = cameraFoval;
+
+            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), rotateValue));
+            viewport.Camera.Transform = cameraRotation;
         }
 
         private void RotateRight_Click(object sender, RoutedEventArgs e)
         {
-
+            rotateValue += 5f;
             //5 is computated euclid distance between zero point and default camera position
 
             double newX = 5 * Math.Cos(90);
@@ -118,10 +124,11 @@ namespace _3DReconstructionWPF
             Transform3D cameraTranslation = new TranslateTransform3D(new Point3D(newX, 0, newY) - cameraPosition);
             viewport.Camera.Transform = cameraTranslation;
 
-            Log.writeLog("vec: " + (new Point3D(newX, 0, newY) - cameraPosition).ToString());
-            Log.writeLog("new pos: " + newPos.ToString());
 
-            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), 98));
+            //Log.writeLog("vec: " + (new Point3D(newX, 0, newY) - cameraPosition).ToString());
+            //Log.writeLog("new pos: " + newPos.ToString());
+
+            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), rotateValue));
             viewport.Camera.Transform = cameraRotation;
         }
     }
