@@ -88,7 +88,7 @@ namespace _3DReconstructionWPF
                         -0.707106781187f, 0.707106781187f, 0, 0,
                         0, 0, 1, 0,
                         1, 0, 0, 1
-                    )) ,
+                    )),
                 /*rotation = System.Numerics.Quaternion.Normalize(System.Numerics.Quaternion.CreateFromRotationMatrix(new System.Numerics.Matrix4x4(
                         1, 0, 0, 0,
                         0, 1, 0, 0,
@@ -97,7 +97,7 @@ namespace _3DReconstructionWPF
                     )))*/
             };
 
-            icpData = new ICP.ICPData(null,trans);
+            icpData = new ICP.ICPData(null, trans);
 
             icp = new ICP();
 
@@ -135,17 +135,17 @@ namespace _3DReconstructionWPF
 
                     transformSizeValue -= 0.18f;
 
-                    Matrix3D m = new Matrix3D(
+                    /*Matrix3D m = new Matrix3D(
                         0.707106781187f, 0.707106781187f, 0, 0,
                         -0.707106781187f, 0.707106781187f, 0, 0,
-                        0, 0, 1, 0, 
-                        1, 0, 0, 1);  //last column
+                        0, 0, 1, 0,
+                        1, 0, 0, 1);  //last column */
 
-                    /*Matrix3D m = new Matrix3D(
+                    Matrix3D m = new Matrix3D(
                         1,0, 0, 0,
                         0,1, 0, 0,
                         0, 0, 1, 0,
-                        1, 0, 0, 1);*/
+                        1, 0, 0, 1);
 
                     Point3D[] k = new Point3D[displayPointCloud.Count];
                     displayPointCloud.CopyTo(k, 0);
@@ -154,14 +154,15 @@ namespace _3DReconstructionWPF
 
                     m.Transform(k);
 
-                    for(int i = 0;i < pcSize ; i++)
+                    for (int i = 0; i < pcSize; i++)
                     {
                         displayPointCloud.Add(k[i]);
                     }
 
 
                     rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
-                }else rend.CreatePointCloud(displayPointCloud, Brushes.AntiqueWhite);
+                }
+                else rend.CreatePointCloud(displayPointCloud, Brushes.AntiqueWhite);
 
                 cycleRuns++;
                 label_Cycle.Content = "cycle: " + cycleRuns;
@@ -188,7 +189,7 @@ namespace _3DReconstructionWPF
         private void TransformPC(Point3DCollection source, Point3DCollection reference)
         {
             //compute transformation from reference
-            icpData = icp.ComputeICP(Parser3DPoint.FromPoint3DToDataPoints(source),
+                icpData = icp.ComputeICP(Parser3DPoint.FromPoint3DToDataPoints(source),
                 Parser3DPoint.FromPoint3DToDataPoints(reference),
                 icpData.transform.Inverse());
 
@@ -245,5 +246,18 @@ namespace _3DReconstructionWPF
             viewport.Camera.Transform = cameraRotation;
         }
 
+        private void SavePointCloud_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter("pointCloud.txt", true))
+            {
+                for(int i = 0; i < displayPointCloud.Count; i++)
+                {
+                    Point3D p = displayPointCloud[i];
+                    file.WriteLine(p.ToString());
+                }
+            }
+            Log.writeLog("Saved the point cloud");
+        }
     }
 }

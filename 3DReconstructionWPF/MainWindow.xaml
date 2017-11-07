@@ -96,6 +96,7 @@
    Width="305"  
    Height="149" Margin="965,592,0,0"/>
         <Button x:Name="button_Copy2" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="1134,523,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
+        <Button x:Name="button_Copy3" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="1008,230,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
 
     </Grid>
 </Window>
