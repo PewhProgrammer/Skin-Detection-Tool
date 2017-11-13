@@ -33,7 +33,7 @@ namespace _3DReconstructionWPF.GUI
                 //Log.writeLog("Point created: (" + points[i].X+","+points[i].Y+","+points[i].Z+")");
 
                
-                //if(i < 2300 || i > 4399) 
+                if(i < 3700)
                 AddCubeToMesh(pointCloudMesh, points[i], 0.0018f); //0.0018 is default
             }
             Log.writeLog(points.Count + " vertices found");

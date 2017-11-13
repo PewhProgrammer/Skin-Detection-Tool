@@ -36,7 +36,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="pointmatcher.net">
+    <Reference Include="pointmatcher.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>Library\pointmatcher.net\pointmatcher.net\bin\Debug\pointmatcher.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -74,7 +75,8 @@
     </Compile>
     <Compile Include="Computation\Parser3DPoint.cs" />
     <Compile Include="Computation\ICP.cs" />
-    <Compile Include="Control\ButtonClickHandler.cs" />
+    <Compile Include="Data\AnnotationHandler.cs" />
+    <Compile Include="Data\Point3DM.cs" />
     <Compile Include="FrameView\ColorView.cs" />
     <Compile Include="FrameView\FrameView.cs" />
     <Compile Include="FrameView\PointCloudView.cs" />
@@ -111,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Library\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

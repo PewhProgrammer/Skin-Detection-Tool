@@ -85,6 +85,8 @@ namespace _3DReconstructionWPF.Computation
                 if (p.Y < yMin) yMin = p.Y;
                 if (p.Z < zMin) zMin = p.Z;
 
+                
+
 
                 //Log.writeLog("found point: (" + p.X + ", " + p.Y + ", " + p.Z + ")");
             }

@@ -38,9 +38,9 @@ namespace _3DReconstructionWPF.Computation
 
             pointmatcher.net.ICP icp = new pointmatcher.net.ICP
             {
-                ReadingDataPointsFilters = new RandomSamplingDataPointsFilter(prob: 0.1f),
-                ReferenceDataPointsFilters = new SamplingSurfaceNormalDataPointsFilter(SamplingMethod.RandomSampling, ratio: 0.2f),
-                OutlierFilter   = new TrimmedDistOutlierFilter(ratio: 0.58f) // [0 - 1]
+                ReadingDataPointsFilters = new RandomSamplingDataPointsFilter(prob: 1f),
+                ReferenceDataPointsFilters = new SamplingSurfaceNormalDataPointsFilter(SamplingMethod.RandomSampling, ratio: 1f),
+                OutlierFilter   = new TrimmedDistOutlierFilter(ratio: 0.62f) // [0 - 1]
             }; 
             
             transform = icp.Compute(reading, reference, initialTransform);

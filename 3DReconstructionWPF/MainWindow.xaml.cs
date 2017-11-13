@@ -82,7 +82,7 @@ namespace _3DReconstructionWPF
 
             pointmatcher.net.EuclideanTransform trans = new pointmatcher.net.EuclideanTransform
             {
-                translation = System.Numerics.Vector3.Zero,
+                translation = System.Numerics.Vector3.UnitX,
                 rotation = System.Numerics.Quaternion.CreateFromRotationMatrix(new System.Numerics.Matrix4x4(
                     0.707106781187f, 0.707106781187f, 0, 0,
                         -0.707106781187f, 0.707106781187f, 0, 0,
@@ -124,8 +124,8 @@ namespace _3DReconstructionWPF
             //if (!checkKinectConnection()) return;
             reference = displayPointCloud;
 
-            displayPointCloud = pcv.getDepthDataFromLatestFrame();
-            //displayPointCloud = rend.ReadData();
+            //displayPointCloud = pcv.getDepthDataFromLatestFrame();
+            displayPointCloud = rend.ReadData();
             if (displayPointCloud != null)
             {
 
@@ -135,17 +135,17 @@ namespace _3DReconstructionWPF
 
                     transformSizeValue -= 0.18f;
 
-                    /*Matrix3D m = new Matrix3D(
+                    Matrix3D m = new Matrix3D(
                         0.707106781187f, 0.707106781187f, 0, 0,
                         -0.707106781187f, 0.707106781187f, 0, 0,
                         0, 0, 1, 0,
                         1, 0, 0, 1);  //last column */
 
-                    Matrix3D m = new Matrix3D(
+                    /*Matrix3D m = new Matrix3D(
                         1,0, 0, 0,
                         0,1, 0, 0,
                         0, 0, 1, 0,
-                        1, 0, 0, 1);
+                        1, 0, 0, 1);*/
 
                     Point3D[] k = new Point3D[displayPointCloud.Count];
                     displayPointCloud.CopyTo(k, 0);
@@ -156,6 +156,7 @@ namespace _3DReconstructionWPF
 
                     for (int i = 0; i < pcSize; i++)
                     {
+                        if(i > 3000)
                         displayPointCloud.Add(k[i]);
                     }
 
