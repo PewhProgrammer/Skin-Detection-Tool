@@ -51,18 +51,13 @@ namespace _3DReconstructionWPF.FrameKinectView
                 cM = sensor.CoordinateMapper;
 
                 multiSourceFrameReader = sensor.OpenMultiSourceFrameReader(
-                    FrameSourceTypes.Depth | FrameSourceTypes.Color);
+                    FrameSourceTypes.Depth | FrameSourceTypes.Color | FrameSourceTypes.Body | FrameSourceTypes.BodyIndex);
 
                 //multiSourceFrameReader.MultiSourceFrameArrived += Reader_MultiSourceFrameArrived;
 
 
                 sensor.Open();
 
-                if (sensor.IsOpen)
-                {
-                    //KinectMessage.Text = "Developing kinect for Windows v2.0 App with Visual Studio 2015 on Windows 10";
-
-                }
             }
         }
 
@@ -77,7 +72,7 @@ namespace _3DReconstructionWPF.FrameKinectView
         private void Reader_MultiSourceFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
         {
             // InfraredFrame is IDisposable
-            MultiSourceFrame multiSourceFrame = e.FrameReference.AcquireFrame();
+            var multiSourceFrame = e.FrameReference.AcquireFrame();
             getDepthData(multiSourceFrame);
 
             //could get color data as well
@@ -94,17 +89,35 @@ namespace _3DReconstructionWPF.FrameKinectView
             }
 
             if(frame != null)
-            return getDepthData(frame);
+            {
+                return getDepthData(frame);
+            }
 
             return null;
         }
 
             Point3DCollection getDepthData(MultiSourceFrame frame)
         {
-            Log.writeLog("captured Frame");  
+            Log.writeLog("captured Frame");
 
-            DepthFrameReference depthFrameReference = frame.DepthFrameReference;
-            DepthFrame depthFrame = depthFrameReference.AcquireFrame();
+            byte[] array = null;
+
+            // filter background with bodyIndex
+            using (BodyIndexFrame bodyIndexFrame = frame.BodyIndexFrameReference.AcquireFrame())
+            {
+                if (bodyIndexFrame != null)
+                {
+                    var description = bodyIndexFrame.FrameDescription;
+                    array = new byte[description.Width * description.Height];
+
+                    bodyIndexFrame.CopyFrameDataToArray(array);
+
+                    float k = 2;
+                }
+            }
+
+            var depthFrameReference = frame.DepthFrameReference;
+            var depthFrame = depthFrameReference.AcquireFrame();
 
             if (depthFrame == null) return null;
 
@@ -113,9 +126,16 @@ namespace _3DReconstructionWPF.FrameKinectView
 
             CameraSpacePoint[] depth2xyz = new CameraSpacePoint[height * width];
 
+            
 
             ushort[] depthFrameData = new ushort[height*width];
             depthFrame.CopyFrameDataToArray(depthFrameData);
+
+            for(int i = 0; i < depthFrameData.Length; i++)
+            {
+                if (array[i] == 255)
+                    depthFrameData[i] = 0;
+            }
 
             //depthFrame.Dispose(); //
 
@@ -123,6 +143,37 @@ namespace _3DReconstructionWPF.FrameKinectView
             cM.MapDepthFrameToCameraSpace(depthFrameData,depth2xyz);
 
             return Parser3DPoint.FromCameraSpaceToPoint3DCollection(depth2xyz, height * width);
+        }
+
+        Point3DCollection GetDepthDataArm(MultiSourceFrame frame)
+        {
+            using(var bodyFrame = frame.BodyFrameReference.AcquireFrame())
+            {
+                if(bodyFrame != null)
+                {
+                    var bodies = new Body[bodyFrame.BodyFrameSource.BodyCount];
+                    bodyFrame.GetAndRefreshBodyData(bodies);
+
+                    foreach( var body in bodies)
+                    {
+                        if(body != null)
+                        {
+                            if (body.IsTracked)
+                            {
+                                // Find the joints
+                                Joint handRight = body.Joints[JointType.HandRight];
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];
+
+                                Joint handLeft = body.Joints[JointType.HandLeft];
+                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return null;
         }
     }
 }

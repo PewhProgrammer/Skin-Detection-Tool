@@ -123,9 +123,10 @@ namespace _3DReconstructionWPF
 
             //if (!checkKinectConnection()) return;
             reference = displayPointCloud;
-
-            //displayPointCloud = pcv.getDepthDataFromLatestFrame();
-            displayPointCloud = rend.ReadData();
+            displayPointCloud = pcv.getDepthDataFromLatestFrame();
+            
+            
+            //displayPointCloud = rend.ReadData();
             if (displayPointCloud != null)
             {
 

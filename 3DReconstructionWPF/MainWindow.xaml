@@ -19,8 +19,8 @@
            Background="Black"
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
-   Width="826"  
-   Height="515" Margin="84,78,0,0">
+   Width="965"  
+   Height="576">
 
             <Viewport3D  x:Name="viewport" Margin="9">
                 <Viewport3D.Camera>
@@ -62,6 +62,8 @@
                 Stretch="Uniform" Margin="-8"/>
         </Border>
 
+        <Canvas Name="canvas" Height="175" Margin="970,0,5,0" VerticalAlignment="Top"/>
+
         <Border  
    BorderThickness="4"  
    BorderBrush="Black"  
@@ -69,12 +71,6 @@
    VerticalAlignment="Top"  
    Width="305"  
    Height="741" Margin="965,0,0,0"/>
-
-
-
-
-
-        <Label x:Name="label" FontWeight="Bold" Content="3D Reconstruction Tool"  FontSize="18" HorizontalAlignment="Left" Margin="40,19,0,0" VerticalAlignment="Top" Width="228" Height="36"/>
         <Button x:Name="button" Content="Start Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="1008,523,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
 
         <Canvas Background="Gray" HorizontalAlignment="Left" Height="38" Margin="970,180,0,0" VerticalAlignment="Top" Width="295"/>
@@ -84,8 +80,8 @@
         <Label x:Name="label_Pending" Content="Pending PC" Foreground="YellowGreen"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,101,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
         <Label x:Name="label_Established" Content="Established PC" Foreground="BlueViolet"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,120,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
 
-        <Button x:Name="button_Copy" Content="Rotate Right"  Click="RotateRight_Click" HorizontalAlignment="Left" Margin="202,616,0,0" VerticalAlignment="Top" Width="88" Height="48"/>
-        <Button x:Name="button_Copy1" Content="Rotate Left"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="84,616,0,0" VerticalAlignment="Top" Width="90" Height="48"/>
+        <Button x:Name="button_Copy" Content="Rotate Right"  Click="RotateRight_Click" HorizontalAlignment="Left" Margin="139,666,0,0" VerticalAlignment="Top" Width="88" Height="48"/>
+        <Button x:Name="button_Copy1" Content="Rotate Left"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="10,666,0,0" VerticalAlignment="Top" Width="90" Height="48"/>
         <DockPanel HorizontalAlignment="Left" Height="100" LastChildFill="False" Margin="910,175,0,0" VerticalAlignment="Top" Width="100"/>
         <TextBox    x:Name="textBox" HorizontalAlignment="Left" Height="149" Margin="970,592,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
         <Border  
