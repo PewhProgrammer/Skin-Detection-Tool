@@ -155,16 +155,16 @@ namespace _3DReconstructionWPF
 
                     m.Transform(k);
 
-                    for (int i = 0; i < pcSize; i++)
+                    /*for (int i = 0; i < pcSize; i++)
                     {
                         if(i > 3000)
                         displayPointCloud.Add(k[i]);
-                    }
+                    }*/
 
 
                     rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
                 }
-                else rend.CreatePointCloud(displayPointCloud, Brushes.AntiqueWhite);
+                else rend.CreatePointCloud(displayPointCloud, Brushes.White);
 
                 cycleRuns++;
                 label_Cycle.Content = "cycle: " + cycleRuns;

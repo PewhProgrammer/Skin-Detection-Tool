@@ -18,6 +18,9 @@ namespace _3DReconstructionWPF.FrameKinectView
 
         private MultiSourceFrameReader _multiSourceFrameReader = null;
 
+        // canvas on top of rgb color stream
+        private Canvas _canvas = ((MainWindow)Application.Current.MainWindow).canvas;
+
         Image frameDisplayImage;
         public ColorView(Image FDI)
         {
@@ -107,33 +110,35 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 float y = head.Position.Y;
                                 float z = head.Position.Z;
 
-                                var canvas = ((MainWindow)Application.Current.MainWindow).canvas;
 
                                 // Find the joints
+
                                 Joint handRight = body.Joints[JointType.HandRight];
                                 Joint thumbRight = body.Joints[JointType.ThumbRight];
 
+                                // Tip
                                 Joint tipRight = body.Joints[JointType.HandTipRight];
-
-
+                                Joint tipLeft = body.Joints[JointType.HandTipLeft];
 
 
                                 Joint handLeft = body.Joints[JointType.HandLeft];
                                 Joint thumbLeft = body.Joints[JointType.ThumbLeft];
 
-                                // Draw the joints...
-                                if (canvas.Children.Count > 20)
+                                // elbow
+                                Joint elbowLeft = body.Joints[JointType.ElbowLeft];
+
+                                // Refresh Points
+                                if (_canvas.Children.Count > 20)
                                 {
-                                    canvas.Children.RemoveRange(0, 2);
+                                    _canvas.Children.RemoveRange(0, 2);
                                 }
 
-                                //canvas.Children.Clear();
                                 //Util.DrawPoint(canvas, head);
-                                Util.DrawPoint(canvas, tipRight);
+                                Util.DrawPoint(_canvas, tipRight);
 
-                                handRight = Util.ScaleTo(handRight, canvas.ActualWidth, canvas.ActualHeight);
-                                thumbRight = Util.ScaleTo(thumbRight, canvas.ActualWidth, canvas.ActualHeight);
-                                tipRight = Util.ScaleTo(tipRight, canvas.ActualWidth, canvas.ActualHeight);
+                                handRight = Util.ScaleTo(handRight, _canvas.ActualWidth, _canvas.ActualHeight);
+                                thumbRight = Util.ScaleTo(thumbRight, _canvas.ActualWidth, _canvas.ActualHeight);
+                                tipRight = Util.ScaleTo(tipRight, _canvas.ActualWidth, _canvas.ActualHeight);
 
                                 var vector = new Vector3D
                                 {
@@ -146,12 +151,15 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 var thumbR = thumbRight.Position;
                                 var thumbRPoint3D = new Point3D(thumbR.X, thumbR.Y, thumbR.Z);
 
-                                //Util.DrawLine(canvas, thumbRPoint3D, thumbRPoint3D + vector);
 
                                 var tipR = tipRight.Position;
                                 var tipRPoint3D = new Point3D(tipR.X, tipR.Y, tipR.Z);
 
-                                Util.DrawLine(canvas, tipRPoint3D, tipRPoint3D + vector);
+                                //Util.DrawLine(_canvas, tipRPoint3D, tipRPoint3D + vector);
+
+                                BuildBoundingBoxAroundLeftArm(
+                                    Util.ScaleTo(tipLeft, _canvas.ActualWidth, _canvas.ActualHeight),
+                                    Util.ScaleTo(elbowLeft, _canvas.ActualWidth, _canvas.ActualHeight));
 
                             }
                         }
@@ -159,6 +167,15 @@ namespace _3DReconstructionWPF.FrameKinectView
                 }
             }
 
+        }
+
+        private void BuildBoundingBoxAroundLeftArm(Joint tipLeft, Joint elbowLeft)
+        {
+            // Find all 4 perpendicular lines to this axis 
+            Util.DrawLine(_canvas,
+                Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position),
+                Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position
+                ));
         }
 
         private ImageSource ToBitmap(ColorFrame frame)

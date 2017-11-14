@@ -77,7 +77,7 @@ namespace _3DReconstructionWPF.GUI
             {
                 Point3D point = new Point3D(0, 0, i/5.0f);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
-                AddCubeToMesh(axisMesh, point, 0.005);
+                AddCubeToMesh(axisMesh, point, 0.0035f);
             }
 
             AddToScene(axisMesh, Brushes.Blue);

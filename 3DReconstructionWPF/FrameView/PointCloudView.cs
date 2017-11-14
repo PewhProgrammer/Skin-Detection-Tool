@@ -125,22 +125,48 @@ namespace _3DReconstructionWPF.FrameKinectView
             int width = depthFrame.FrameDescription.Width;
 
             CameraSpacePoint[] depth2xyz = new CameraSpacePoint[height * width];
+            CameraSpacePoint elbowLeftPosition = new CameraSpacePoint();
 
-            
-
-            ushort[] depthFrameData = new ushort[height*width];
-            depthFrame.CopyFrameDataToArray(depthFrameData);
-
-            for(int i = 0; i < depthFrameData.Length; i++)
+            using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
             {
-                if (array[i] == 255)
-                    depthFrameData[i] = 0;
+                if (frame != null)
+                {
+                    var bodies = new Body[bodyFrame.BodyFrameSource.BodyCount];
+
+                    bodyFrame.GetAndRefreshBodyData(bodies);
+
+                    foreach (var body in bodies)
+                    {
+                        if (body != null)
+                        {
+                            if (body.IsTracked)
+                            {
+                                // elbow
+                                Joint elbowLeft = body.Joints[JointType.ElbowLeft];
+                                elbowLeftPosition = elbowLeft.Position;
+                            }
+                        }
+                    }
+                }
             }
 
-            //depthFrame.Dispose(); //
+            ushort[] depthFrameData = new ushort[height * width];
+
+            depthFrame.CopyFrameDataToArray(depthFrameData);
 
             // Process depth frame data...
-            cM.MapDepthFrameToCameraSpace(depthFrameData,depth2xyz);
+            cM.MapDepthFrameToCameraSpace(depthFrameData, depth2xyz);
+
+            for (int i = 0; i < depthFrameData.Length; i++)
+            {
+                if (array[i] == 255 || depth2xyz[i].Z > elbowLeftPosition.Z)
+                {
+                    depth2xyz[i].Z = -10000;
+                }
+            }
+
+
+
 
             return Parser3DPoint.FromCameraSpaceToPoint3DCollection(depth2xyz, height * width);
         }

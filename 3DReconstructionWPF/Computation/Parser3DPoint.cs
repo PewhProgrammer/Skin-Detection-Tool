@@ -59,6 +59,17 @@ namespace _3DReconstructionWPF.Computation
             return result;
         }
 
+        public static Point3D FromCameraSpaceToPoint3D(CameraSpacePoint csp)
+        {
+            return new Point3D
+            {
+                X = csp.X,
+                Y = csp.Y,
+                Z = csp.Z
+
+            };
+        }
+
         public static Point3DCollection FromCameraSpaceToPoint3DCollection(CameraSpacePoint[] depth2xyz, int size)
         {
             Point3DCollection points = new Point3DCollection();
@@ -74,6 +85,7 @@ namespace _3DReconstructionWPF.Computation
             {
                 CameraSpacePoint p = depth2xyz[i];
 
+                //filter out points
                 if (p.X > -2 && p.Y > -2 && p.Z > 0 && p.X < 3 && p.Y < 3 && p.Z < 2)
                     points.Add(new Point3D(p.X, p.Y, p.Z));
                 else continue;
