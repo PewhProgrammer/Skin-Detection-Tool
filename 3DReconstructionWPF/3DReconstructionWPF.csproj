@@ -76,9 +76,10 @@
     <Compile Include="Computation\Parser3DPoint.cs" />
     <Compile Include="Computation\ICP.cs" />
     <Compile Include="Computation\Util.cs" />
-    <Compile Include="Data\AnnotationGroup.cs" />
     <Compile Include="Data\AnnotationHandler.cs" />
+    <Compile Include="Data\AnnotationGroup.cs" />
     <Compile Include="Data\BBox.cs" />
+    <Compile Include="Data\Ray.cs" />
     <Compile Include="FrameView\ColorView.cs" />
     <Compile Include="FrameView\FrameView.cs" />
     <Compile Include="FrameView\PointCloudView.cs" />

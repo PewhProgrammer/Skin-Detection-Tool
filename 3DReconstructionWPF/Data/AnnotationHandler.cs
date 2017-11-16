@@ -34,13 +34,18 @@ namespace _3DReconstructionWPF.Data
             _annotatedPointsList = new LinkedList<AnnotationGroup>();
         }
 
+        /// <summary>
+        /// Add all points, which were found during intersection process
+        /// </summary>
+        /// <param name="p"></param>
         public void AddIntersectedPoint(Point3D p)
         {
+            // Should be the intersection poitn with the box
             _currentPointSet.Add(p);
         }
 
         /// <summary>
-        /// Annotates drawn area
+        /// Annotates drawn area. Could be computational inefficient
         /// </summary>
         public void Annotate(AnnotationType t)
         {
@@ -48,10 +53,10 @@ namespace _3DReconstructionWPF.Data
             BBox box = Util.ComputeBoundingBox(_currentPointSet.ToArray());
 
             // Determine all Points which fit into the boundings of the box
-            HashSet<Point3D> _annotated_ = new HashSet<Point3D>();
+            HashSet<Point3D> annotated = new HashSet<Point3D>();
 
             // Add all points to annotationGroup
-            _annotatedPointsList.AddLast(new AnnotationGroup(_annotated_,t));
+            _annotatedPointsList.AddLast(new AnnotationGroup(annotated,t));
         }
 
         /// <summary>

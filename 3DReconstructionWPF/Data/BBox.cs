@@ -20,6 +20,12 @@ namespace _3DReconstructionWPF.Data
             _minPoint = new Point3D();
         }
 
+        public BBox(Point3D max, Point3D min)
+        {
+            _maxPoint = max;
+            _minPoint = min;
+        }
+
         public void Extend(Point3D p)
         {
             double x = p.X;
@@ -36,6 +42,13 @@ namespace _3DReconstructionWPF.Data
             else if (z < _minPoint.Z) _minPoint.Z = z;
         }
 
+        public Tuple<float,float> Intersect(Ray ray)
+        {
+            // slab technique implementation
+
+            return new Tuple<float, float>(0, 0);
+        }
+
         public Point3D GetMaxPoint()
         {
             return _maxPoint;
@@ -44,6 +57,14 @@ namespace _3DReconstructionWPF.Data
         public Point3D GetMinPoint()
         {
             return _minPoint;
+        }
+
+        public static BBox Empty()
+        {
+            return new BBox(
+                new Point3D(float.MaxValue, float.MaxValue, float.MaxValue),
+                new Point3D(float.MinValue, float.MinValue, float.MinValue)
+                );
         }
     }
 }
