@@ -25,8 +25,8 @@ namespace _3DReconstructionWPF.Data
             Default
         }
 
-        private HashSet<Point3D> _currentPointSet;
-        private LinkedList<AnnotationGroup> _annotatedPointsList; 
+        public static HashSet<Point3D> _currentPointSet;
+        public static  LinkedList<AnnotationGroup> _annotatedPointsList; 
 
         public AnnotationHandler()
         {
@@ -38,7 +38,7 @@ namespace _3DReconstructionWPF.Data
         /// Add all points, which were found during intersection process
         /// </summary>
         /// <param name="p"></param>
-        public void AddIntersectedPoint(Point3D p)
+        public static void AddIntersectedPoint(Point3D p)
         {
             // Should be the intersection poitn with the box
             _currentPointSet.Add(p);
@@ -47,7 +47,7 @@ namespace _3DReconstructionWPF.Data
         /// <summary>
         /// Annotates drawn area. Could be computational inefficient
         /// </summary>
-        public void Annotate(AnnotationType t)
+        public static void Annotate(AnnotationType t)
         {
             // Get Bounding Box of _currentPointSet
             BBox box = Util.ComputeBoundingBox(_currentPointSet.ToArray());
@@ -63,7 +63,7 @@ namespace _3DReconstructionWPF.Data
         /// Used to draw all points in the 3DView
         /// </summary>
         /// <returns> AnnotationGroup(includes all points being annotated) </returns>
-        public AnnotationGroup GetLatestAnnotation()
+        public static AnnotationGroup GetLatestAnnotation()
         {
             if (_annotatedPointsList.Count > 0) return _annotatedPointsList.Last();
             return null;

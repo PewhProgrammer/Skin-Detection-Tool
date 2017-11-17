@@ -70,7 +70,11 @@
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
    Width="305"  
-   Height="741" Margin="965,0,0,0"/>
+   Height="741" Margin="965,0,0,0">
+            
+        </Border>
+        <Button x:Name="button_Copy5" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="1008,246,0,0"/>
+        <Button x:Name="button_Copy4" Content="Readjust PC"  Click="Readjust_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="1008,452,0,0"/>
         <Button x:Name="button" Content="Start Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="1008,523,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
 
         <Canvas Background="Gray" HorizontalAlignment="Left" Height="38" Margin="970,180,0,0" VerticalAlignment="Top" Width="295"/>
@@ -92,7 +96,7 @@
    Width="305"  
    Height="149" Margin="965,592,0,0"/>
         <Button x:Name="button_Copy2" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="1134,523,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
-        <Button x:Name="button_Copy3" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="1008,230,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
+        <Button x:Name="button_Copy3" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="810,592,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
 
     </Grid>
 </Window>

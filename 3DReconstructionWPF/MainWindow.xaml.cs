@@ -10,7 +10,7 @@ using _3DReconstructionWPF.FrameKinectView;
 using _3DReconstructionWPF.Computation;
 
 using System.Windows.Media;
-
+using _3DReconstructionWPF.Data;
 
 namespace _3DReconstructionWPF
 {
@@ -124,9 +124,9 @@ namespace _3DReconstructionWPF
             //if (!checkKinectConnection()) return;
             reference = displayPointCloud;
             displayPointCloud = pcv.getDepthDataFromLatestFrame();
-            
-            
             //displayPointCloud = rend.ReadData();
+
+
             if (displayPointCloud != null)
             {
 
@@ -260,6 +260,42 @@ namespace _3DReconstructionWPF
                 }
             }
             Log.writeLog("Saved the point cloud");
+        }
+
+        private void Readjust_Click(object sender, RoutedEventArgs e)
+        {
+
+            displayPointCloud = pcv.getDepthDataFromLatestFrame();
+            //displayPointCloud = rend.ReadData();
+
+            if (displayPointCloud != null)
+            {
+
+                Log.writeLog("--------------------");
+                BVH bvh = new BVH();
+                for(int i = 0; i < displayPointCloud.Count; i++)
+                {
+                    bvh.AddToScene(displayPointCloud[i]);
+                }
+                
+
+                if (cycleRuns > 0)
+                {
+                    rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
+                }
+                else rend.CreatePointCloud(displayPointCloud, Brushes.White);
+
+                cycleRuns++;
+                label_Cycle.Content = "cycle: " + cycleRuns;
+            }
+            else Log.writeLog("Could not retrieve depth frame");
+        }
+
+        private AnnotationHandler.AnnotationType _annotation = AnnotationHandler.AnnotationType.Default;
+
+        private void Annotate_Click(object sender, RoutedEventArgs e)
+        {
+            AnnotationHandler.Annotate(_annotation);
         }
     }
 }

@@ -9,6 +9,7 @@ using _3DReconstructionWPF.GUI;
 using System.Windows.Media.Media3D;
 
 using _3DReconstructionWPF.Computation;
+using _3DReconstructionWPF.Data;
 
 namespace _3DReconstructionWPF.FrameKinectView
 {
@@ -18,6 +19,7 @@ namespace _3DReconstructionWPF.FrameKinectView
         private MultiSourceFrameReader multiSourceFrameReader;
         private CoordinateMapper cM;
         private Renderer renderer;
+        public BVH _bvh { get; set; }
 
         public PointCloudView(Renderer rend)
         {
@@ -98,7 +100,6 @@ namespace _3DReconstructionWPF.FrameKinectView
 
             Point3DCollection getDepthData(MultiSourceFrame frame)
         {
-            Log.writeLog("captured Frame");
 
             byte[] array = null;
 
@@ -141,9 +142,42 @@ namespace _3DReconstructionWPF.FrameKinectView
                         {
                             if (body.IsTracked)
                             {
+
+                                // Find the joints
+
+                                Joint handRight = body.Joints[JointType.HandRight];
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];
+
+                                // Tip
+                                Joint tipRight = body.Joints[JointType.HandTipRight];
+                                Joint tipLeft = body.Joints[JointType.HandTipLeft];
+
+
+                                Joint handLeft = body.Joints[JointType.HandLeft];
+                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];
+
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
-                                elbowLeftPosition = elbowLeft.Position;
+
+                                var vector = new Vector3D
+                                {
+                                    X = tipRight.Position.X - handRight.Position.X,
+                                    Y = tipRight.Position.Y - handRight.Position.Y,
+                                    Z = tipRight.Position.Z - handRight.Position.Z
+                                };
+
+                                vector.Normalize();
+                                var tipR = tipRight.Position;
+                                Ray ray = new Ray(new Point3D(tipR.X, tipR.Y, tipR.Z), vector);
+
+                                if (_bvh != null)
+                                {
+                                    Intersection inter = _bvh.Intersect(ray, float.MaxValue);
+                                    if(inter._distance > 0) // Found Intersection
+                                    {
+                                        AnnotationHandler.AddIntersectedPoint(inter._ray.GetPoint(inter._distance));
+                                    }
+                                }
                             }
                         }
                     }
