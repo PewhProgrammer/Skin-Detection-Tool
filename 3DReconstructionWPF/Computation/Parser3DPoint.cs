@@ -109,5 +109,33 @@ namespace _3DReconstructionWPF.Computation
             Log.writeLog("Min Pointcloud Points: (" + xMin + ", " + yMin + ", " + zMin + ")");
             return points;
         }
+
+        /// <summary>
+        /// populate point cloud around p to weight it more
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static Point3DCollection GetPopulatedPointCloud(Point3D p)
+        {
+            Point3DCollection result = new Point3DCollection();
+            float countPoints = 15;
+
+            for(int i = 0; i < countPoints; i++)
+            {
+                
+                result.Add(new Point3D(p.X - i,p.Y,p.X));
+                result.Add(new Point3D(p.X + i, p.Y, p.X));
+
+                result.Add(new Point3D(p.X, p.Y - i, p.Z));
+                result.Add(new Point3D(p.X, p.Y + i, p.Z));
+
+                result.Add(new Point3D(p.X, p.Y, p.Z - i));
+                result.Add(new Point3D(p.X, p.Y, p.Z + i));
+            }
+
+            result.Add(p);
+
+            return result;
+        }
     }
 }

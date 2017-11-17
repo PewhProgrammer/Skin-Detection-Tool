@@ -6,13 +6,22 @@
         xmlns:local="clr-namespace:_3DReconstructionWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="769" Width="1270">
+
     <Grid Background="DarkSlateGray" Margin="0,0,-8,-3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="469*"/>
+            <ColumnDefinition Width="166*"/>
+        </Grid.ColumnDefinitions>
 
 
-        <DockPanel Margin="965,0,0,0"  Background="DarkSlateGray" />
+        <DockPanel Margin="27,0,0,0"  Background="DarkSlateGray" Grid.Column="1" />
 
+        <Button x:Name="AnimationResume1" Content="Animate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="10,611,0,0"/>
+        <Button x:Name="AnimationPause" Content="Stop"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="137,611,0,0"/>
 
-        <Border  
+        <Border  MouseLeftButtonDown="OnDragSourceMouseLeftButtonDown" 
+                   MouseLeftButtonUp="OnDragSourceMouseLeftButtonUp" 
+                   MouseMove="OnDragSourceMouseMove"
    BorderThickness="1"  
    BorderBrush="DarkBlue"  
    CornerRadius="2"
@@ -20,13 +29,44 @@
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
    Width="965"  
-   Height="576">
+   Height="592" Grid.ColumnSpan="2">
 
-            <Viewport3D  x:Name="viewport" Margin="9">
+            <Viewport3D x:Name="viewport" Margin="9" >
+
+                <Viewport3D.Resources>
+                    <local:LookBackConverter x:Key="lookBackConverter" />
+                    <PathGeometry x:Key="circlePath">
+                        <PathGeometry.Figures>
+                            <PathFigure StartPoint="-4, -4" IsClosed="False">
+                                <ArcSegment Point="4,4" Size="4, 4" />
+                                <ArcSegment Point="-4,-4" Size="4,4" />
+                            </PathFigure>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </Viewport3D.Resources>
+
+                <Viewport3D.Triggers>
+                    <EventTrigger RoutedEvent="MouseDown">
+                        <BeginStoryboard Name="AnimationStoryboard">
+                            <Storyboard>
+                                <local:Point3DAnimationUsingPath
+                          Storyboard.TargetName="camera"
+                          Storyboard.TargetProperty="Position"
+                          Duration="0:0:20"
+                          Z="2"
+                          PathGeometry="{StaticResource circlePath}"
+                          RepeatBehavior="Forever">
+                                </local:Point3DAnimationUsingPath>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                    <!-- Pause the Storyboard -->
+                </Viewport3D.Triggers>
+
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="camera" FarPlaneDistance="50"
 
-        NearPlaneDistance="0" LookDirection="0,0,10" UpDirection="0,1,0"
+        NearPlaneDistance="0"  LookDirection="{Binding RelativeSource={RelativeSource Self}, Path=Position, Converter={StaticResource lookBackConverter}}" UpDirection="0,1,0"
 
             Position="0.2,0.2,-3.3" FieldOfView="45" />
                 </Viewport3D.Camera>
@@ -41,12 +81,12 @@
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-
-
-
-
             </Viewport3D>
+
         </Border>
+
+
+
 
         <Border  
    BorderThickness="8"  
@@ -56,13 +96,13 @@
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
    Width="295"  
-   Height="170" Margin="970,5,0,0">
+   Height="170" Margin="32,5,0,0" Grid.Column="1">
 
             <Image x:Name="FrameDisplayImage" Grid.Row="1" 
                 Stretch="Uniform" Margin="-8"/>
         </Border>
 
-        <Canvas Name="canvas" Height="175" Margin="970,0,5,0" VerticalAlignment="Top"/>
+        <Canvas Name="canvas" Height="175" Margin="32,0,5,0" VerticalAlignment="Top" Grid.Column="1"/>
 
         <Border  
    BorderThickness="4"  
@@ -70,33 +110,35 @@
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
    Width="305"  
-   Height="741" Margin="965,0,0,0">
-            
+   Height="741" Margin="27,0,0,0" Grid.Column="1">
+
         </Border>
-        <Button x:Name="button_Copy5" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="1008,246,0,0"/>
-        <Button x:Name="button_Copy4" Content="Readjust PC"  Click="Readjust_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="1008,452,0,0"/>
-        <Button x:Name="button" Content="Start Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="1008,523,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
+        <Button x:Name="button_Copy5" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,246,0,0" Grid.Column="1"/>
+        <Button x:Name="button_Copy4" Content="Readjust PC"  Click="Readjust_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,452,0,0" Grid.Column="1"/>
+        <Button x:Name="button" Content="Start Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="70,523,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
 
-        <Canvas Background="Gray" HorizontalAlignment="Left" Height="38" Margin="970,180,0,0" VerticalAlignment="Top" Width="295"/>
-        <Label x:Name="label_Copy1" Content="Kinect Color View"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="1008,175,0,0" VerticalAlignment="Top" Height="50" Width="226"/>
+        <Canvas Background="Gray" HorizontalAlignment="Left" Height="38" Margin="32,180,0,0" VerticalAlignment="Top" Width="295" Grid.Column="1"/>
+        <Label x:Name="label_Copy1" Content="Kinect Color View"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="70,175,0,0" VerticalAlignment="Top" Height="50" Width="226" Grid.Column="1"/>
         <Label x:Name="label_Cycle" Content="" Foreground="Yellow"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,503,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
-        <Label x:Name="label_Reference" Content="Reference PC" Foreground="AntiqueWhite"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,83,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
-        <Label x:Name="label_Pending" Content="Pending PC" Foreground="YellowGreen"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,101,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
-        <Label x:Name="label_Established" Content="Established PC" Foreground="BlueViolet"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,120,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
+        <Label x:Name="label_Reference" Content="Reference PC" Foreground="AntiqueWhite"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,10,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
+        <Label x:Name="label_Pending" Content="Pending PC" Foreground="YellowGreen"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,29,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
+        <Label x:Name="label_Established" Content="Established PC" Foreground="BlueViolet"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,47,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
 
-        <Button x:Name="button_Copy" Content="Rotate Right"  Click="RotateRight_Click" HorizontalAlignment="Left" Margin="139,666,0,0" VerticalAlignment="Top" Width="88" Height="48"/>
-        <Button x:Name="button_Copy1" Content="Rotate Left"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="10,666,0,0" VerticalAlignment="Top" Width="90" Height="48"/>
-        <DockPanel HorizontalAlignment="Left" Height="100" LastChildFill="False" Margin="910,175,0,0" VerticalAlignment="Top" Width="100"/>
-        <TextBox    x:Name="textBox" HorizontalAlignment="Left" Height="149" Margin="970,592,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300"/>
+        <Button x:Name="button_rotateRight" Content=">"  Click="RotateRight_Click" HorizontalAlignment="Left" Margin="508,611,0,0" VerticalAlignment="Top" Width="100" Height="48"/>
+        <Button x:Name="button_rotateLeft" Content="&lt;"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="374,611,0,0" VerticalAlignment="Top" Width="100" Height="48"/>
+        <DockPanel HorizontalAlignment="Left" Height="100" LastChildFill="False" Margin="910,175,0,0" VerticalAlignment="Top" Width="100" Grid.ColumnSpan="2"/>
+        <TextBox    x:Name="textBox" HorizontalAlignment="Left" Height="149" Margin="32,592,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="300" Grid.Column="1"/>
         <Border  
    BorderThickness="4"  
    BorderBrush="Black"  
    HorizontalAlignment="Left"  
    VerticalAlignment="Top"  
    Width="305"  
-   Height="149" Margin="965,592,0,0"/>
-        <Button x:Name="button_Copy2" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="1134,523,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
-        <Button x:Name="button_Copy3" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="810,592,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
+   Height="149" Margin="27,592,0,0" Grid.Column="1"/>
+        <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="196,523,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
+        <Button x:Name="button_SavePC" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="834,612,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
+        <Button x:Name="button_TrackFeaturePoints" Content="Scan Features"  Click="ScanFeatures_Click" HorizontalAlignment="Left" Margin="70,312,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
+
 
     </Grid>
 </Window>

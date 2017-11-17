@@ -11,6 +11,7 @@ using _3DReconstructionWPF.Computation;
 
 using System.Windows.Media;
 using _3DReconstructionWPF.Data;
+using System.Windows.Input;
 
 namespace _3DReconstructionWPF
 {
@@ -79,13 +80,14 @@ namespace _3DReconstructionWPF
             pcv = new PointCloudView(rend);
 
             sensor = KinectSensor.GetDefault();
+            var rotationAngle = 0.707106781187f; // 0.707106781187f
 
             pointmatcher.net.EuclideanTransform trans = new pointmatcher.net.EuclideanTransform
             {
                 translation = System.Numerics.Vector3.UnitX,
                 rotation = System.Numerics.Quaternion.CreateFromRotationMatrix(new System.Numerics.Matrix4x4(
-                    0.707106781187f, 0.707106781187f, 0, 0,
-                        -0.707106781187f, 0.707106781187f, 0, 0,
+                    rotationAngle, rotationAngle, 0, 0,
+                        -rotationAngle, rotationAngle, 0, 0,
                         0, 0, 1, 0,
                         1, 0, 0, 1
                     )),
@@ -115,15 +117,25 @@ namespace _3DReconstructionWPF
         }
 
         private Point3DCollection displayPointCloud;
-        private Point3DCollection reference;
+        private Point3DCollection _reference;
+
+        private Point3DCollection _referenceFeatures;
+        private Point3DCollection _readingFeatures;
+
         private float transformSizeValue = 1f;
 
         private void StartScan_Click(object sender, RoutedEventArgs e)
         {
 
             //if (!checkKinectConnection()) return;
-            reference = displayPointCloud;
-            displayPointCloud = pcv.getDepthDataFromLatestFrame();
+            _reference = displayPointCloud;
+            _referenceFeatures = _readingFeatures;
+
+            var depthData = pcv.getDepthDataFromLatestFrame();
+
+
+            displayPointCloud = depthData.Item1;
+            _readingFeatures = depthData.Item2;
             //displayPointCloud = rend.ReadData();
 
 
@@ -134,32 +146,21 @@ namespace _3DReconstructionWPF
                 {
                     Log.writeLog("--------------------");
 
-                    transformSizeValue -= 0.18f;
+                    var rotationAngle = 0.707106781187f;
 
                     Matrix3D m = new Matrix3D(
-                        0.707106781187f, 0.707106781187f, 0, 0,
-                        -0.707106781187f, 0.707106781187f, 0, 0,
-                        0, 0, 1, 0,
-                        1, 0, 0, 1);  //last column */
+               rotationAngle, 0, rotationAngle, 0,
+                0, 1, 0, 0,
+                -rotationAngle, 0, rotationAngle, 0,
+                1, 0, 0, 1);
 
-                    /*Matrix3D m = new Matrix3D(
-                        1,0, 0, 0,
-                        0,1, 0, 0,
-                        0, 0, 1, 0,
-                        1, 0, 0, 1);*/
-
-                    Point3D[] k = new Point3D[displayPointCloud.Count];
-                    displayPointCloud.CopyTo(k, 0);
-                    int pcSize = displayPointCloud.Count;
-                    displayPointCloud.Clear();
-
-                    m.Transform(k);
-
-                    /*for (int i = 0; i < pcSize; i++)
-                    {
-                        if(i > 3000)
-                        displayPointCloud.Add(k[i]);
-                    }*/
+                    m = new Matrix3D(
+               rotationAngle, rotationAngle, 0, 0,
+                -rotationAngle, rotationAngle, 0, 0,
+                0, 0, 1, 0,
+                1, 0, 0, 1);
+                    displayPointCloud = Util.RotatePoint3DCollection(displayPointCloud, m);
+                    _readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);
 
 
                     rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
@@ -175,8 +176,8 @@ namespace _3DReconstructionWPF
 
         private void Transform_Click(object sender, RoutedEventArgs e)
         {
-            if (reference != null)
-                TransformPC(displayPointCloud, reference);
+            if (_reference != null)
+                TransformPC(_readingFeatures, _referenceFeatures);
             else Log.writeLog("missing reference or pending point data!");
         }
 
@@ -191,13 +192,13 @@ namespace _3DReconstructionWPF
         private void TransformPC(Point3DCollection source, Point3DCollection reference)
         {
             //compute transformation from reference
-                icpData = icp.ComputeICP(Parser3DPoint.FromPoint3DToDataPoints(source),
+            icpData = icp.ComputeICP(
+                Parser3DPoint.FromPoint3DToDataPoints(source),
                 Parser3DPoint.FromPoint3DToDataPoints(reference),
                 icpData.transform.Inverse());
 
-            displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(
-                icpData.data
-                );
+            var p = ICP.ApplyTransformation(icpData.transform,Parser3DPoint.FromPoint3DToDataPoints(displayPointCloud));
+            displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(p);
 
             rend.CreatePointCloud(displayPointCloud, Brushes.BlueViolet);
         }
@@ -253,7 +254,7 @@ namespace _3DReconstructionWPF
             using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter("pointCloud.txt", true))
             {
-                for(int i = 0; i < displayPointCloud.Count; i++)
+                for (int i = 0; i < displayPointCloud.Count; i++)
                 {
                     Point3D p = displayPointCloud[i];
                     file.WriteLine(p.ToString());
@@ -265,7 +266,8 @@ namespace _3DReconstructionWPF
         private void Readjust_Click(object sender, RoutedEventArgs e)
         {
 
-            displayPointCloud = pcv.getDepthDataFromLatestFrame();
+
+            displayPointCloud = pcv.getDepthDataFromLatestFrame().Item1;
             //displayPointCloud = rend.ReadData();
 
             if (displayPointCloud != null)
@@ -273,11 +275,11 @@ namespace _3DReconstructionWPF
 
                 Log.writeLog("--------------------");
                 BVH bvh = new BVH();
-                for(int i = 0; i < displayPointCloud.Count; i++)
+                for (int i = 0; i < displayPointCloud.Count; i++)
                 {
                     bvh.AddToScene(displayPointCloud[i]);
                 }
-                
+
 
                 if (cycleRuns > 0)
                 {
@@ -295,7 +297,106 @@ namespace _3DReconstructionWPF
 
         private void Annotate_Click(object sender, RoutedEventArgs e)
         {
+            Log.writeLog("ANNOTATION NOT YET IMPLEMENTED");
             AnnotationHandler.Annotate(_annotation);
+            //AnimationStoryboard.Storyboard.Pause(this);
+        }
+
+        private void minuteHand_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                //my code: moving the needle
+                Log.writeLog("moved mouse");
+            }
+        }
+
+        private bool _leftButtonDown = false;
+        private Point _mousePosition;
+        private float _scale = 0.2f;
+
+        private void OnDragSourceMouseLeftButtonDown(object sender,
+       MouseButtonEventArgs e)
+        {
+            _leftButtonDown = true;
+            _mousePosition = e.GetPosition(e.Source as FrameworkElement);
+        }
+
+        private void OnDragSourceMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_leftButtonDown) return;
+
+            viewport.Camera.Transform = ComputeDragOffsetX(_mousePosition, e.GetPosition((e.Source as FrameworkElement)));
+            //viewport.Camera.Transform = ComputeDragOffsetY(_mousePosition, e.GetPosition((e.Source as FrameworkElement)));
+        }
+        private void OnDragSourceMouseLeftButtonUp(object sender,
+     MouseButtonEventArgs e)
+        {
+            _leftButtonDown = false;
+        }
+
+        private Transform3D ComputeDragOffsetX(Point from, Point to)
+        {
+            //viewport.Camera.Transform = cameraFoval;
+            double diffX = from.X - to.X;
+            double diffY = from.Y - to.Y;
+
+
+            rotateValue += ((float)diffX * 0.008f + (float)diffY * 0.008f) * 0.5f;
+
+    
+            return new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(diffY*_scale, diffX*_scale, 0), rotateValue));
+        }
+
+        private void ScanFeatures_Click(object sender, RoutedEventArgs e)
+        {
+            _reference = displayPointCloud;
+            displayPointCloud = pcv.getDepthDataFromLatestFrame().Item1;
+
+
+            if (displayPointCloud != null)
+            {
+
+                if (cycleRuns > 0)
+                {
+                    Log.writeLog("--------------------");
+
+                    transformSizeValue -= 0.18f;
+
+                    Matrix3D m = new Matrix3D(
+                        0.707106781187f, 0.707106781187f, 0, 0,
+                        -0.707106781187f, 0.707106781187f, 0, 0,
+                        0, 0, 1, 0,
+                        1, 0, 0, 1);  //last column */
+
+                    /*Matrix3D m = new Matrix3D(
+                        1,0, 0, 0,
+                        0,1, 0, 0,
+                        0, 0, 1, 0,
+                        1, 0, 0, 1);*/
+
+                    Point3D[] k = new Point3D[displayPointCloud.Count];
+                    displayPointCloud.CopyTo(k, 0);
+                    int pcSize = displayPointCloud.Count;
+                    displayPointCloud.Clear();
+
+                    m.Transform(k);
+
+                    /*for (int i = 0; i < pcSize; i++)
+                    {
+                        if(i > 3000)
+                        displayPointCloud.Add(k[i]);
+                    }*/
+
+
+                    rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
+                }
+                else rend.CreatePointCloud(displayPointCloud, Brushes.White);
+
+                cycleRuns++;
+                label_Cycle.Content = "cycle: " + cycleRuns;
+            }
+            else Log.writeLog("Could not retrieve depth frame");
         }
     }
 }

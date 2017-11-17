@@ -65,7 +65,8 @@ namespace pointmatcher.net
             var b = -(wF.TransposeAndMultiply(dotProd));
 
             // Cholesky decomposition
-            var x = A.Cholesky().Solve(b);
+            var cho = A.Cholesky();
+            var x = cho.Solve(b);
 
             EuclideanTransform transform;
             Vector3 axis = new Vector3(x.At(0, 0), x.At(1, 0), x.At(2, 0));

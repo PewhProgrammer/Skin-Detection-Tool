@@ -51,6 +51,31 @@ namespace _3DReconstructionWPF.Computation
             canvas.Children.Add(ellipse);
         }
 
+        public static Point3DCollection RotatePoint3DCollection(Point3DCollection p ,Matrix3D m)
+        {
+
+
+            /*Matrix3D m = new Matrix3D(
+                1,0, 0, 0,
+                0,1, 0, 0,
+                0, 0, 1, 0,
+                1, 0, 0, 1); //last column */
+
+            int pcSize = p.Count;
+            Point3D[] k = new Point3D[pcSize];
+            p.CopyTo(k, 0);
+            p.Clear();
+
+            m.Transform(k);
+
+            for (int i = 0; i < pcSize; i++)
+            {
+                p.Add(k[i]);
+            }
+
+            return p;
+        }
+
         public static void DrawLine(Canvas canvas, Point3D p, Point3D q)
         {
             Line line = new Line

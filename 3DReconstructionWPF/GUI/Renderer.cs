@@ -16,6 +16,8 @@ namespace _3DReconstructionWPF.GUI
         private Model3DGroup group;
         MeshGeometry3D pointCloudMesh;
 
+        private float _drawSize = 0.0135f;
+
         public Renderer(Model3DGroup group)
         {
             this.group = group;
@@ -77,7 +79,7 @@ namespace _3DReconstructionWPF.GUI
             {
                 Point3D point = new Point3D(0, 0, i/5.0f);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
-                AddCubeToMesh(axisMesh, point, 0.0035f);
+                AddCubeToMesh(axisMesh, point, _drawSize);
             }
 
             AddToScene(axisMesh, Brushes.Blue);

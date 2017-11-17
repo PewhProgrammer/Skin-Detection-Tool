@@ -80,7 +80,7 @@ namespace _3DReconstructionWPF.FrameKinectView
             //could get color data as well
         }
 
-        public Point3DCollection getDepthDataFromLatestFrame()
+        public Tuple<Point3DCollection,Point3DCollection> getDepthDataFromLatestFrame()
         {
             int i = 0;
             MultiSourceFrame frame = null;
@@ -92,7 +92,7 @@ namespace _3DReconstructionWPF.FrameKinectView
 
             if(frame != null)
             {
-                return getDepthData(frame);
+                return new Tuple<Point3DCollection, Point3DCollection>(getDepthData(frame), GetFeatureDepthData(frame));
             }
 
             return null;
@@ -193,15 +193,11 @@ namespace _3DReconstructionWPF.FrameKinectView
 
             for (int i = 0; i < depthFrameData.Length; i++)
             {
-                if (array[i] == 255 || depth2xyz[i].Z > elbowLeftPosition.Z)
+                if (array[i] == 255)
                 {
                     depth2xyz[i].Z = -10000;
                 }
             }
-
-
-
-
             return Parser3DPoint.FromCameraSpaceToPoint3DCollection(depth2xyz, height * width);
         }
 
@@ -232,6 +228,101 @@ namespace _3DReconstructionWPF.FrameKinectView
                 }
             }
 
+
+            return null;
+        }
+
+        private Point3DCollection GetFeatureDepthData(MultiSourceFrame frame)
+        {
+            var depthFrameReference = frame.DepthFrameReference;
+            var depthFrame = depthFrameReference.AcquireFrame();
+
+            if (depthFrame == null) return null;
+
+            int height = depthFrame.FrameDescription.Height;
+            int width = depthFrame.FrameDescription.Width;
+
+            CameraSpacePoint[] depth2xyz = new CameraSpacePoint[height * width];
+
+            using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
+            {
+                if (bodyFrame != null)
+                {
+                    var bodies = new Body[bodyFrame.BodyFrameSource.BodyCount];
+
+                    bodyFrame.GetAndRefreshBodyData(bodies);
+
+                    foreach (var body in bodies)
+                    {
+                        if (body != null)
+                        {
+                            if (body.IsTracked)
+                            {
+
+                                // Find the joints
+
+                                Joint handRight = body.Joints[JointType.HandRight];
+                                Joint handLeft = body.Joints[JointType.HandLeft];
+
+                                // Tip
+                                Joint tipRight = body.Joints[JointType.HandTipRight];
+                                Joint tipLeft = body.Joints[JointType.HandTipLeft];
+
+
+                                Joint thumbRight = body.Joints[JointType.ThumbRight];
+                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];
+
+                                // elbow
+                                Joint elbowLeft = body.Joints[JointType.ElbowLeft];
+
+                                Point3DCollection result = new Point3DCollection();
+
+
+                                
+
+                                Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
+                                Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position)
+                                );
+
+                                for(int i = 0; i < collection.Count; i++)
+                                {
+                                    result.Add(collection[i]);
+                                }
+
+                                collection = Parser3DPoint.GetPopulatedPointCloud(
+                                Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)
+                                );
+
+                                for (int i = 0; i < collection.Count; i++)
+                                {
+                                    result.Add(collection[i]);
+                                }
+
+                                collection = Parser3DPoint.GetPopulatedPointCloud(
+                                Parser3DPoint.FromCameraSpaceToPoint3D(handLeft.Position)
+                                );
+
+                                for (int i = 0; i < collection.Count; i++)
+                                {
+                                    result.Add(collection[i]);
+                                }
+
+                                collection = Parser3DPoint.GetPopulatedPointCloud(
+                                Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position)
+                                );
+
+                                for (int i = 0; i < collection.Count; i++)
+                                {
+                                    result.Add(collection[i]);
+                                }
+
+
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
 
             return null;
         }

@@ -73,24 +73,29 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Computation\BVH.cs" />
     <Compile Include="Computation\Parser3DPoint.cs" />
     <Compile Include="Computation\ICP.cs" />
     <Compile Include="Computation\Util.cs" />
     <Compile Include="Data\AnnotationHandler.cs" />
     <Compile Include="Data\AnnotationGroup.cs" />
     <Compile Include="Data\BBox.cs" />
+    <Compile Include="Data\Intersection.cs" />
+    <Compile Include="Data\Node.cs" />
     <Compile Include="Data\Ray.cs" />
     <Compile Include="FrameView\ColorView.cs" />
     <Compile Include="FrameView\FrameView.cs" />
     <Compile Include="FrameView\PointCloudView.cs" />
     <Compile Include="GUI\Renderer.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="LookBackConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Point3DAnimationUsingPath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

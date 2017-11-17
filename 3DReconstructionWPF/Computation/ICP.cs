@@ -40,14 +40,14 @@ namespace _3DReconstructionWPF.Computation
             {
                 ReadingDataPointsFilters = new RandomSamplingDataPointsFilter(prob: 1f),
                 ReferenceDataPointsFilters = new SamplingSurfaceNormalDataPointsFilter(SamplingMethod.RandomSampling, ratio: 1f),
-                OutlierFilter   = new TrimmedDistOutlierFilter(ratio: 0.92f) // [0 - 1]
+                OutlierFilter   = new TrimmedDistOutlierFilter(ratio: 0.99f) // [0 - 1]
             }; 
             
             transform = icp.Compute(reading, reference, initialTransform);
             return new ICPData(ApplyTransformation(transform, reading), transform);
         }
 
-        private DataPoints ApplyTransformation(EuclideanTransform eTransform,DataPoints reading)
+        public static DataPoints ApplyTransformation(EuclideanTransform eTransform,DataPoints reading)
         {
             Log.writeLog("Applying Translation: " + eTransform.translation.ToString());
             Log.writeLog("Applying Rotation: " + eTransform.rotation.ToString());
