@@ -21,6 +21,8 @@ namespace _3DReconstructionWPF
     public partial class MainWindow : Window
     {
 
+        private static FrameType DEFAULT_FRAMETYPE = FrameType.Color;
+        private AnnotationHandler.AnnotationType _annotation = AnnotationHandler.AnnotationType.Default;
         public enum FrameType
         {
             Infrared, //Not implemented in current project
@@ -28,30 +30,40 @@ namespace _3DReconstructionWPF
             BodyMask //Not implemented in current project
         }
 
-        private Renderer rend;
-        private static FrameType DEFAULT_FRAMETYPE = FrameType.Color;
 
-        private int runs = -1;
-        private int cycleRuns = 0;
+        private Renderer _renderer;
+        private FrameView _currentFrameView;
+        private PointCloudView _pcv;
 
-        private FrameView currentFrameView;
-        private PointCloudView pcv;
+        private Point _mousePosition;
+        private Point3D _cameraPosition = new Point3D(0.2, 0.2, 5);
+        private Transform3D _cameraFoval = new TranslateTransform3D(new Vector3D(0, 0, 0));
 
-        private Transform3D cameraFoval = new TranslateTransform3D(new Vector3D(0, 0, 0));
-        private Point3D cameraPosition = new Point3D(0.2, 0.2, 5);
+        private KinectSensor _sensor;
 
-        private float rotateValue = 5;
-        private KinectSensor sensor;
+        private ICP _icp;
+        private ICP.ICPData _icpData;
 
-        private ICP icp;
+        private Point3DCollection _displayPointCloud;
+        private Point3DCollection _reference;
+        private Point3DCollection _readingFeatures;
+        private Point3DCollection _referenceFeatures;
+
+        private int _cycleRuns = 0;
+        private float _rotateValue = 5;
+        private float _scale = 0.2f;
+        private float _transformSizeValue = 1f;
+        private bool _leftButtonDown = false;
+
+
 
         public MainWindow()
         {
-            init();
-            setupCurrentDisplay(DEFAULT_FRAMETYPE);
+            Init();
+            SetupCurrentDisplay(DEFAULT_FRAMETYPE);
         }
 
-        private void setupCurrentDisplay(FrameType display)
+        private void SetupCurrentDisplay(FrameType display)
         {
 
             switch (display)
@@ -59,8 +71,8 @@ namespace _3DReconstructionWPF
                 case FrameType.Infrared:
                     break;
                 case FrameType.Color:
-                    currentFrameView = new ColorView(FrameDisplayImage);
-                    AddDisplay(currentFrameView);
+                    _currentFrameView = new ColorView(FrameDisplayImage);
+                    AddDisplay(_currentFrameView);
                     break;
                 case FrameType.BodyMask:
                     break;
@@ -70,16 +82,31 @@ namespace _3DReconstructionWPF
             }
         }
 
-        private void init()
+        private void Init()
         {
+
+
+            /// TEST ////
+            var refPoint = new Point3D(-1, -1, -1);
+            var transPoint = new Point3D(2, 2, 2);
+
+            var transform = Util.ComputeInitialTransformation(refPoint,transPoint);
+
+            Ray ray = new Ray(new Point3D(0, 0, 10), new Vector3D(0.1f,0.1f,-1));
+            BBox box = new BBox(new Point3D(-1 ,- 1, - 1), new Point3D(1,1,1));
+            var hit = box.Intersect(ray);
+
+            Log.writeLog("test end");
+
+            /// TEST END ///
             InitializeComponent();
             Log.initLog(textBox);
 
-            rend = new Renderer(group);
+            _renderer = new Renderer(group);
 
-            pcv = new PointCloudView(rend);
+            _pcv = new PointCloudView(_renderer);
 
-            sensor = KinectSensor.GetDefault();
+            _sensor = KinectSensor.GetDefault();
             var rotationAngle = 0.707106781187f; // 0.707106781187f
 
             pointmatcher.net.EuclideanTransform trans = new pointmatcher.net.EuclideanTransform
@@ -99,16 +126,16 @@ namespace _3DReconstructionWPF
                     )))*/
             };
 
-            icpData = new ICP.ICPData(null, trans);
+            _icpData = new ICP.ICPData(null, trans);
 
-            icp = new ICP();
+            _icp = new ICP();
 
-            label_Cycle.Content = "cycle: " + cycleRuns;
+            label_Cycle.Content = "cycle: " + _cycleRuns;
 
-            if (sensor != null)
+            if (_sensor != null)
             {
 
-                if (sensor.IsOpen && sensor.IsAvailable)
+                if (_sensor.IsOpen && _sensor.IsAvailable)
                 {
                     Log.writeLog("Kinect capture data available!");
                 }
@@ -116,33 +143,25 @@ namespace _3DReconstructionWPF
             }
         }
 
-        private Point3DCollection displayPointCloud;
-        private Point3DCollection _reference;
-
-        private Point3DCollection _referenceFeatures;
-        private Point3DCollection _readingFeatures;
-
-        private float transformSizeValue = 1f;
-
         private void StartScan_Click(object sender, RoutedEventArgs e)
         {
 
             //if (!checkKinectConnection()) return;
-            _reference = displayPointCloud;
+            _reference = _displayPointCloud;
             _referenceFeatures = _readingFeatures;
 
-            var depthData = pcv.getDepthDataFromLatestFrame();
+            var depthData = _pcv.GetDepthDataFromLatestFrame();
 
 
-            displayPointCloud = depthData.Item1;
+            _displayPointCloud = depthData.Item1;
             _readingFeatures = depthData.Item2;
             //displayPointCloud = rend.ReadData();
 
 
-            if (displayPointCloud != null)
+            if (_displayPointCloud != null)
             {
 
-                if (cycleRuns > 0)
+                if (_cycleRuns > 0)
                 {
                     Log.writeLog("--------------------");
 
@@ -159,16 +178,16 @@ namespace _3DReconstructionWPF
                 -rotationAngle, rotationAngle, 0, 0,
                 0, 0, 1, 0,
                 1, 0, 0, 1);
-                    displayPointCloud = Util.RotatePoint3DCollection(displayPointCloud, m);
+                    _displayPointCloud = Util.RotatePoint3DCollection(_displayPointCloud, m);
                     _readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);
 
 
-                    rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
+                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
                 }
-                else rend.CreatePointCloud(displayPointCloud, Brushes.White);
+                else _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
 
-                cycleRuns++;
-                label_Cycle.Content = "cycle: " + cycleRuns;
+                _cycleRuns++;
+                label_Cycle.Content = "cycle: " + _cycleRuns;
             }
             else Log.writeLog("Could not retrieve depth frame");
 
@@ -181,7 +200,6 @@ namespace _3DReconstructionWPF
             else Log.writeLog("missing reference or pending point data!");
         }
 
-        private ICP.ICPData icpData;
 
         /*
          Point cloud color:
@@ -191,21 +209,27 @@ namespace _3DReconstructionWPF
              */
         private void TransformPC(Point3DCollection source, Point3DCollection reference)
         {
+
+            // As far as i know, source[i] maps to reference[i]
+            // compute initial transformation
+
+            var initialTransformation = Util.ComputeInitialTransformation(source[0], reference[0]);
+
             //compute transformation from reference
-            icpData = icp.ComputeICP(
+            _icpData = _icp.ComputeICP(
                 Parser3DPoint.FromPoint3DToDataPoints(source),
                 Parser3DPoint.FromPoint3DToDataPoints(reference),
-                icpData.transform.Inverse());
+                _icpData.transform.Inverse());
 
-            var p = ICP.ApplyTransformation(icpData.transform,Parser3DPoint.FromPoint3DToDataPoints(displayPointCloud));
-            displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(p);
+            var p = ICP.ApplyTransformation(_icpData.transform,Parser3DPoint.FromPoint3DToDataPoints(_displayPointCloud));
+            _displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(p);
 
-            rend.CreatePointCloud(displayPointCloud, Brushes.BlueViolet);
+            _renderer.CreatePointCloud(_displayPointCloud, Brushes.BlueViolet);
         }
 
-        private Boolean checkKinectConnection()
+        private Boolean CheckKinectConnection()
         {
-            if (!(sensor.IsOpen && sensor.IsAvailable))
+            if (!(_sensor.IsOpen && _sensor.IsAvailable))
             {
                 Log.writeLog("Could not establish connection to kinect device. Aborting...");
                 return false;
@@ -221,16 +245,16 @@ namespace _3DReconstructionWPF
 
         private void RotateLeft_Click(object sender, RoutedEventArgs e)
         {
-            rotateValue -= 5f;
+            _rotateValue -= 5f;
             //viewport.Camera.Transform = cameraFoval;
 
-            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), rotateValue));
+            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), _rotateValue));
             viewport.Camera.Transform = cameraRotation;
         }
 
         private void RotateRight_Click(object sender, RoutedEventArgs e)
         {
-            rotateValue += 5f;
+            _rotateValue += 5f;
             //5 is computated euclid distance between zero point and default camera position
 
             double newX = 5 * Math.Cos(90);
@@ -238,14 +262,14 @@ namespace _3DReconstructionWPF
 
             Point3D newPos = new Point3D(newX, 0, newY);
 
-            Transform3D cameraTranslation = new TranslateTransform3D(new Point3D(newX, 0, newY) - cameraPosition);
+            Transform3D cameraTranslation = new TranslateTransform3D(new Point3D(newX, 0, newY) - _cameraPosition);
             viewport.Camera.Transform = cameraTranslation;
 
 
             //Log.writeLog("vec: " + (new Point3D(newX, 0, newY) - cameraPosition).ToString());
             //Log.writeLog("new pos: " + newPos.ToString());
 
-            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), rotateValue));
+            Transform3D cameraRotation = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), _rotateValue));
             viewport.Camera.Transform = cameraRotation;
         }
 
@@ -254,9 +278,9 @@ namespace _3DReconstructionWPF
             using (System.IO.StreamWriter file =
                 new System.IO.StreamWriter("pointCloud.txt", true))
             {
-                for (int i = 0; i < displayPointCloud.Count; i++)
+                for (int i = 0; i < _displayPointCloud.Count; i++)
                 {
-                    Point3D p = displayPointCloud[i];
+                    Point3D p = _displayPointCloud[i];
                     file.WriteLine(p.ToString());
                 }
             }
@@ -267,33 +291,31 @@ namespace _3DReconstructionWPF
         {
 
 
-            displayPointCloud = pcv.getDepthDataFromLatestFrame().Item1;
+            _displayPointCloud = _pcv.GetDepthDataFromLatestFrame().Item1;
             //displayPointCloud = rend.ReadData();
 
-            if (displayPointCloud != null)
+            if (_displayPointCloud != null)
             {
 
                 Log.writeLog("--------------------");
                 BVH bvh = new BVH();
-                for (int i = 0; i < displayPointCloud.Count; i++)
+                for (int i = 0; i < _displayPointCloud.Count; i++)
                 {
-                    bvh.AddToScene(displayPointCloud[i]);
+                    bvh.AddToScene(_displayPointCloud[i]);
                 }
 
 
-                if (cycleRuns > 0)
+                if (_cycleRuns > 0)
                 {
-                    rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
+                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
                 }
-                else rend.CreatePointCloud(displayPointCloud, Brushes.White);
+                else _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
 
-                cycleRuns++;
-                label_Cycle.Content = "cycle: " + cycleRuns;
+                _cycleRuns++;
+                label_Cycle.Content = "cycle: " + _cycleRuns;
             }
             else Log.writeLog("Could not retrieve depth frame");
         }
-
-        private AnnotationHandler.AnnotationType _annotation = AnnotationHandler.AnnotationType.Default;
 
         private void Annotate_Click(object sender, RoutedEventArgs e)
         {
@@ -301,19 +323,6 @@ namespace _3DReconstructionWPF
             AnnotationHandler.Annotate(_annotation);
             //AnimationStoryboard.Storyboard.Pause(this);
         }
-
-        private void minuteHand_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                //my code: moving the needle
-                Log.writeLog("moved mouse");
-            }
-        }
-
-        private bool _leftButtonDown = false;
-        private Point _mousePosition;
-        private float _scale = 0.2f;
 
         private void OnDragSourceMouseLeftButtonDown(object sender,
        MouseButtonEventArgs e)
@@ -342,26 +351,26 @@ namespace _3DReconstructionWPF
             double diffY = from.Y - to.Y;
 
 
-            rotateValue += ((float)diffX * 0.008f + (float)diffY * 0.008f) * 0.5f;
+            _rotateValue += ((float)diffX * 0.008f + (float)diffY * 0.008f) * 0.5f;
 
     
-            return new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(diffY*_scale, diffX*_scale, 0), rotateValue));
+            return new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(diffY*_scale, diffX*_scale, 0), _rotateValue));
         }
 
         private void ScanFeatures_Click(object sender, RoutedEventArgs e)
         {
-            _reference = displayPointCloud;
-            displayPointCloud = pcv.getDepthDataFromLatestFrame().Item1;
+            _reference = _displayPointCloud;
+            _displayPointCloud = _pcv.GetDepthDataFromLatestFrame().Item1;
 
 
-            if (displayPointCloud != null)
+            if (_displayPointCloud != null)
             {
 
-                if (cycleRuns > 0)
+                if (_cycleRuns > 0)
                 {
                     Log.writeLog("--------------------");
 
-                    transformSizeValue -= 0.18f;
+                    _transformSizeValue -= 0.18f;
 
                     Matrix3D m = new Matrix3D(
                         0.707106781187f, 0.707106781187f, 0, 0,
@@ -375,10 +384,10 @@ namespace _3DReconstructionWPF
                         0, 0, 1, 0,
                         1, 0, 0, 1);*/
 
-                    Point3D[] k = new Point3D[displayPointCloud.Count];
-                    displayPointCloud.CopyTo(k, 0);
-                    int pcSize = displayPointCloud.Count;
-                    displayPointCloud.Clear();
+                    Point3D[] k = new Point3D[_displayPointCloud.Count];
+                    _displayPointCloud.CopyTo(k, 0);
+                    int pcSize = _displayPointCloud.Count;
+                    _displayPointCloud.Clear();
 
                     m.Transform(k);
 
@@ -389,12 +398,12 @@ namespace _3DReconstructionWPF
                     }*/
 
 
-                    rend.CreatePointCloud(displayPointCloud, Brushes.YellowGreen);
+                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
                 }
-                else rend.CreatePointCloud(displayPointCloud, Brushes.White);
+                else _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
 
-                cycleRuns++;
-                label_Cycle.Content = "cycle: " + cycleRuns;
+                _cycleRuns++;
+                label_Cycle.Content = "cycle: " + _cycleRuns;
             }
             else Log.writeLog("Could not retrieve depth frame");
         }

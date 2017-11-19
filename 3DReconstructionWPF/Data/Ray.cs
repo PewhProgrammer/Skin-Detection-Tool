@@ -9,12 +9,14 @@ namespace _3DReconstructionWPF.Data
 {
     class Ray
     {
-        private Point3D _point { get; set; }
-        private Vector3D _vector { get; set; }
+        public Point3D _point { get; set; }
+        public Vector3D _vector { get; set; }
 
         public Ray(Point3D p,Vector3D v)
         {
             _point = p;
+
+            v.Normalize();
             _vector = v;
         }
 
@@ -23,5 +25,7 @@ namespace _3DReconstructionWPF.Data
             
             return _point + (_vector * distance);
         }
+
+
     }
 }

@@ -32,7 +32,7 @@
    Height="592" Grid.ColumnSpan="2">
 
             <Viewport3D x:Name="viewport" Margin="9" >
-
+                <!-- add loobackconverter.cs and usingpath.cs
                 <Viewport3D.Resources>
                     <local:LookBackConverter x:Key="lookBackConverter" />
                     <PathGeometry x:Key="circlePath">
@@ -60,14 +60,15 @@
                             </Storyboard>
                         </BeginStoryboard>
                     </EventTrigger>
-                    <!-- Pause the Storyboard -->
+                
                 </Viewport3D.Triggers>
-
+                -->
+                <!--" {Binding RelativeSource={RelativeSource Self}, Path=Position, Converter={StaticResource lookBackConverter}}" -->
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="camera" FarPlaneDistance="50"
 
-        NearPlaneDistance="0"  LookDirection="{Binding RelativeSource={RelativeSource Self}, Path=Position, Converter={StaticResource lookBackConverter}}" UpDirection="0,1,0"
-
+        NearPlaneDistance="0"  LookDirection="0,0,10" 
+                        UpDirection="0,1,0"
             Position="0.2,0.2,-3.3" FieldOfView="45" />
                 </Viewport3D.Camera>
 

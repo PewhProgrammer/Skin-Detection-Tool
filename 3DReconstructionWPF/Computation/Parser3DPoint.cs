@@ -118,22 +118,23 @@ namespace _3DReconstructionWPF.Computation
         public static Point3DCollection GetPopulatedPointCloud(Point3D p)
         {
             Point3DCollection result = new Point3DCollection();
-            float countPoints = 15;
-
-            for(int i = 0; i < countPoints; i++)
-            {
-                
-                result.Add(new Point3D(p.X - i,p.Y,p.X));
-                result.Add(new Point3D(p.X + i, p.Y, p.X));
-
-                result.Add(new Point3D(p.X, p.Y - i, p.Z));
-                result.Add(new Point3D(p.X, p.Y + i, p.Z));
-
-                result.Add(new Point3D(p.X, p.Y, p.Z - i));
-                result.Add(new Point3D(p.X, p.Y, p.Z + i));
-            }
+            float countPoints = 8;
 
             result.Add(p);
+
+            for (int i = 0; i < countPoints; i++)
+            {
+                double a = (i / 100.0f);
+                
+                result.Add(new Point3D(p.X - a,p.Y,p.X));
+                result.Add(new Point3D(p.X + a, p.Y, p.X));
+
+                result.Add(new Point3D(p.X, p.Y - a, p.Z));
+                result.Add(new Point3D(p.X, p.Y + a, p.Z));
+
+                result.Add(new Point3D(p.X, p.Y, p.Z - a));
+                result.Add(new Point3D(p.X, p.Y, p.Z + a));
+            }
 
             return result;
         }

@@ -75,12 +75,12 @@ namespace _3DReconstructionWPF.FrameKinectView
         {
             // InfraredFrame is IDisposable
             var multiSourceFrame = e.FrameReference.AcquireFrame();
-            getDepthData(multiSourceFrame);
+            GetDepthData(multiSourceFrame);
 
             //could get color data as well
         }
 
-        public Tuple<Point3DCollection,Point3DCollection> getDepthDataFromLatestFrame()
+        public Tuple<Point3DCollection,Point3DCollection> GetDepthDataFromLatestFrame()
         {
             int i = 0;
             MultiSourceFrame frame = null;
@@ -90,15 +90,13 @@ namespace _3DReconstructionWPF.FrameKinectView
                 i++;
             }
 
-            if(frame != null)
-            {
-                return new Tuple<Point3DCollection, Point3DCollection>(getDepthData(frame), GetFeatureDepthData(frame));
-            }
+            if(frame != null)  return new 
+                    Tuple<Point3DCollection, Point3DCollection>(GetDepthData(frame), GetFeatureDepthData(frame));
 
             return null;
         }
 
-            Point3DCollection getDepthData(MultiSourceFrame frame)
+            Point3DCollection GetDepthData(MultiSourceFrame frame)
         {
 
             byte[] array = null;
@@ -126,7 +124,6 @@ namespace _3DReconstructionWPF.FrameKinectView
             int width = depthFrame.FrameDescription.Width;
 
             CameraSpacePoint[] depth2xyz = new CameraSpacePoint[height * width];
-            CameraSpacePoint elbowLeftPosition = new CameraSpacePoint();
 
             using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
             {
@@ -201,37 +198,6 @@ namespace _3DReconstructionWPF.FrameKinectView
             return Parser3DPoint.FromCameraSpaceToPoint3DCollection(depth2xyz, height * width);
         }
 
-        Point3DCollection GetDepthDataArm(MultiSourceFrame frame)
-        {
-            using(var bodyFrame = frame.BodyFrameReference.AcquireFrame())
-            {
-                if(bodyFrame != null)
-                {
-                    var bodies = new Body[bodyFrame.BodyFrameSource.BodyCount];
-                    bodyFrame.GetAndRefreshBodyData(bodies);
-
-                    foreach( var body in bodies)
-                    {
-                        if(body != null)
-                        {
-                            if (body.IsTracked)
-                            {
-                                // Find the joints
-                                Joint handRight = body.Joints[JointType.HandRight];
-                                Joint thumbRight = body.Joints[JointType.ThumbRight];
-
-                                Joint handLeft = body.Joints[JointType.HandLeft];
-                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            return null;
-        }
-
         private Point3DCollection GetFeatureDepthData(MultiSourceFrame frame)
         {
             var depthFrameReference = frame.DepthFrameReference;
@@ -260,37 +226,31 @@ namespace _3DReconstructionWPF.FrameKinectView
                             {
 
                                 // Find the joints
-
-                                Joint handRight = body.Joints[JointType.HandRight];
                                 Joint handLeft = body.Joints[JointType.HandLeft];
 
                                 // Tip
-                                Joint tipRight = body.Joints[JointType.HandTipRight];
                                 Joint tipLeft = body.Joints[JointType.HandTipLeft];
 
-
-                                Joint thumbRight = body.Joints[JointType.ThumbRight];
                                 Joint thumbLeft = body.Joints[JointType.ThumbLeft];
 
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
+
+
                                 Point3DCollection result = new Point3DCollection();
 
-
-                                
-
                                 Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
-                                Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position)
+                                Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)
                                 );
 
-                                for(int i = 0; i < collection.Count; i++)
+                                for (int i = 0; i < collection.Count; i++)
                                 {
                                     result.Add(collection[i]);
                                 }
 
                                 collection = Parser3DPoint.GetPopulatedPointCloud(
-                                Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)
+                                Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position)
                                 );
 
                                 for (int i = 0; i < collection.Count; i++)

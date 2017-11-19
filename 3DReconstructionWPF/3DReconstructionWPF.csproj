@@ -88,14 +88,12 @@
     <Compile Include="FrameView\PointCloudView.cs" />
     <Compile Include="GUI\Renderer.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="LookBackConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Point3DAnimationUsingPath.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
