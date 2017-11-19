@@ -17,8 +17,19 @@ namespace _3DReconstructionWPF.Data
 
         public BBox()
         {
-            _maxPoint = new Point3D();
-            _minPoint = new Point3D();
+            _maxPoint = new Point3D()
+            {
+                X = float.MinValue,
+                Y = float.MinValue,
+                Z = float.MinValue
+            };
+
+            _minPoint = new Point3D()
+            {
+                X = float.MaxValue,
+                Y = float.MaxValue,
+                Z = float.MaxValue
+            };
         }
 
         public BBox(Point3D max, Point3D min)
@@ -106,8 +117,8 @@ namespace _3DReconstructionWPF.Data
         public static BBox Empty()
         {
             return new BBox(
-                new Point3D(float.MaxValue, float.MaxValue, float.MaxValue),
-                new Point3D(float.MinValue, float.MinValue, float.MinValue)
+                new Point3D(float.MinValue, float.MinValue, float.MinValue),
+                new Point3D(float.MaxValue, float.MaxValue, float.MaxValue)
                 );
         }
     }

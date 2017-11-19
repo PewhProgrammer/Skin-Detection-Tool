@@ -12,13 +12,14 @@ namespace _3DReconstructionWPF.Data
         public HashSet<Point3D> _objects { get; set; }
         public Node _left { get; set; }
         public Node _right { get; set; }
-        private BBox _box;
+        public BBox _box;
 
-
-        private bool _leaf;
+        public int _id;
+        public bool _leaf;
 
         public Node()
         {
+            _objects = new HashSet<Point3D>();
             _box = BBox.Empty();
         }
 

@@ -86,25 +86,36 @@ namespace _3DReconstructionWPF
         {
 
 
-            /// TEST ////
-            var refPoint = new Point3D(-1, -1, -1);
-            var transPoint = new Point3D(2, 2, 2);
-
-            var transform = Util.ComputeInitialTransformation(refPoint,transPoint);
-
-            Ray ray = new Ray(new Point3D(0, 0, 10), new Vector3D(0.1f,0.1f,-1));
-            BBox box = new BBox(new Point3D(-1 ,- 1, - 1), new Point3D(1,1,1));
-            var hit = box.Intersect(ray);
-
-            Log.writeLog("test end");
-
-            /// TEST END ///
+          
             InitializeComponent();
             Log.initLog(textBox);
 
             _renderer = new Renderer(group);
 
             _pcv = new PointCloudView(_renderer);
+
+            /// TEST ////
+            var refPoint = new Point3D(-1, -1, -1);
+            var transPoint = new Point3D(2, 2, 2);
+
+            var transform = Util.ComputeInitialTransformation(refPoint, transPoint);
+
+            Ray ray = new Ray(new Point3D(0, 0, 10), new Vector3D(0.1f, 0.1f, -1));
+            BBox box = new BBox(new Point3D(-1, -1, -1), new Point3D(1, 1, 1));
+            var hit = box.Intersect(ray);
+
+            var structure = new BVH();
+            var points = _renderer.ReadData();
+            for(int i = 0; i < points.Count; i++)
+            {
+                structure.AddToScene(points[i]);
+            }
+            structure.InitIndexing();
+
+
+            Log.writeLog("test end");
+
+            /// TEST END ///
 
             _sensor = KinectSensor.GetDefault();
             var rotationAngle = 0.707106781187f; // 0.707106781187f
