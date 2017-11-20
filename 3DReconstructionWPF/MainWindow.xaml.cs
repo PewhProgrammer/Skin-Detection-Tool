@@ -32,17 +32,20 @@ namespace _3DReconstructionWPF
 
 
         private Renderer _renderer;
-        private FrameView _currentFrameView;
+        private ColorView _rgbv;
         private PointCloudView _pcv;
 
         private Point _mousePosition;
         private Point3D _cameraPosition = new Point3D(0.2, 0.2, 5);
+        private Point3D _thumbReading, _thumbReference;
         private Transform3D _cameraFoval = new TranslateTransform3D(new Vector3D(0, 0, 0));
 
         private KinectSensor _sensor;
 
         private ICP _icp;
         private ICP.ICPData _icpData;
+
+        private BVH _structure = null;
 
         private Point3DCollection _displayPointCloud;
         private Point3DCollection _reference;
@@ -71,8 +74,8 @@ namespace _3DReconstructionWPF
                 case FrameType.Infrared:
                     break;
                 case FrameType.Color:
-                    _currentFrameView = new ColorView(FrameDisplayImage);
-                    AddDisplay(_currentFrameView);
+                    _rgbv = new ColorView(FrameDisplayImage,_renderer);
+                    AddDisplay(_rgbv);
                     break;
                 case FrameType.BodyMask:
                     break;
@@ -82,18 +85,8 @@ namespace _3DReconstructionWPF
             }
         }
 
-        private void Init()
+        private void ExecuteTests()
         {
-
-
-          
-            InitializeComponent();
-            Log.initLog(textBox);
-
-            _renderer = new Renderer(group);
-
-            _pcv = new PointCloudView(_renderer);
-
             /// TEST ////
             var refPoint = new Point3D(-1, -1, -1);
             var transPoint = new Point3D(2, 2, 2);
@@ -104,29 +97,30 @@ namespace _3DReconstructionWPF
             BBox box = new BBox(new Point3D(-1, -1, -1), new Point3D(1, 1, 1));
             var hit = box.Intersect(ray);
 
-            var structure = new BVH();
             var points = _renderer.ReadData();
-            Point3D p = new Point3D();
-            for(int i = 0; i < points.Count; i++)
-            {
-                structure.AddToScene(points[i]);
-                p = points[i];
-            }
-            structure.InitIndexing();
+            _rgbv._bvh = BVH.InitBVH(points);
 
-            Intersection inter = structure.Intersect(ray, float.MaxValue);
-            if (inter.Hit())
-            {
-
-                Log.writeLog("Hit detected!!");
-            }
+            Intersection inter = _structure.Intersect(ray, float.MaxValue);
+            if (inter.Hit()) Log.writeLog("Hit detected!!");
 
             Point3DCollection collection = new Point3DCollection(inter._node._objects);
 
-            _renderer.CreatePointCloud(collection, Brushes.White);
+            //_renderer.CreatePointCloud(collection, Brushes.White);
             Log.writeLog("test end");
 
             /// TEST END ///
+        }
+
+        private void Init()
+        {
+            InitializeComponent();
+            Log.initLog(textBox);
+
+            _renderer = new Renderer(group);
+            _pcv = new PointCloudView(_renderer);
+
+            /// TEST ///
+            //ExecuteTests();
 
             _sensor = KinectSensor.GetDefault();
             var rotationAngle = 0.707106781187f; // 0.707106781187f
@@ -149,20 +143,12 @@ namespace _3DReconstructionWPF
             };
 
             _icpData = new ICP.ICPData(null, trans);
-
             _icp = new ICP();
-
             label_Cycle.Content = "cycle: " + _cycleRuns;
 
-            if (_sensor != null)
-            {
+            if (_sensor != null)  { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
 
-                if (_sensor.IsOpen && _sensor.IsAvailable)
-                {
-                    Log.writeLog("Kinect capture data available!");
-                }
-                else Log.writeLog("Kinect not found!");
-            }
+
         }
 
         private void StartScan_Click(object sender, RoutedEventArgs e)
@@ -172,11 +158,20 @@ namespace _3DReconstructionWPF
             _reference = _displayPointCloud;
             _referenceFeatures = _readingFeatures;
 
-            /*var depthData = _pcv.GetDepthDataFromLatestFrame();
-            _displayPointCloud = depthData.Item1;
-            _readingFeatures = depthData.Item2;*/
-            _displayPointCloud = _renderer.ReadData();
 
+
+            var depthData = _pcv.GetDepthDataFromLatestFrame();
+            _displayPointCloud = depthData.Item1;
+            _readingFeatures = depthData.Item2;
+            if (_referenceFeatures == null) _thumbReference = _readingFeatures[0];
+            else _thumbReading = _readingFeatures[0];
+
+            _displayPointCloud = depthData.Item2;
+
+
+            //_displayPointCloud = _renderer.ReadData();
+
+            //_rgbv._bvh = BVH.InitBVH(_displayPointCloud);
 
             if (_displayPointCloud != null)
             {
@@ -198,6 +193,7 @@ namespace _3DReconstructionWPF
                 -rotationAngle, rotationAngle, 0, 0,
                 0, 0, 1, 0,
                 1, 0, 0, 1);
+
                     _displayPointCloud = Util.RotatePoint3DCollection(_displayPointCloud, m);
                     _readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);
 
@@ -233,13 +229,13 @@ namespace _3DReconstructionWPF
             // As far as i know, source[i] maps to reference[i]
             // compute initial transformation
 
-            var initialTransformation = Util.ComputeInitialTransformation(source[0], reference[0]);
+            var initialTransformation = Util.ComputeInitialTransformation( _thumbReference, _thumbReading);
 
             //compute transformation from reference
             _icpData = _icp.ComputeICP(
                 Parser3DPoint.FromPoint3DToDataPoints(source),
                 Parser3DPoint.FromPoint3DToDataPoints(reference),
-                _icpData.transform.Inverse());
+                initialTransformation);
 
             var p = ICP.ApplyTransformation(_icpData.transform,Parser3DPoint.FromPoint3DToDataPoints(_displayPointCloud));
             _displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(p);

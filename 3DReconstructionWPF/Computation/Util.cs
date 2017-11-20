@@ -79,17 +79,28 @@ namespace _3DReconstructionWPF.Computation
 
         public static void DrawLine(Canvas canvas, Point3D p, Point3D q)
         {
+            DrawLine(canvas, p, q, Colors.Azure,5);
+        }
+
+        public static void DrawLine(Canvas canvas, Point3D p, Point3D q, Color c,int stroke)
+        {
+            if (c == null)
+            {
+                c = Colors.Azure;
+            }
+
             Line line = new Line
             {
                 X1 = p.X,
                 Y1 = p.Y,
                 X2 = q.X,
                 Y2 = q.Y,
-                StrokeThickness = 5,
-                Stroke = new SolidColorBrush(Colors.BlueViolet)
+                StrokeThickness = stroke,
+                Stroke = new SolidColorBrush(c)
             };
 
             canvas.Children.Add(line);
+
         }
 
         public static Joint ScaleTo(Joint joint,double width, double height)
@@ -174,10 +185,10 @@ namespace _3DReconstructionWPF.Computation
 
             m.translation = vectorTranslation;
 
-            /* // Check that p1 is going to be transformed to q1
+             // Check that p1 is going to be transformed to q1
             var pNum = new System.Numerics.Vector3((float)p1.X, (float)p1.Y, (float)p1.Z);
             var result = m.Apply(pNum);
-            */
+            
 
             return m;
         }

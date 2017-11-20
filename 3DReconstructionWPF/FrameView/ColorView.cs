@@ -7,7 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using _3DReconstructionWPF.Computation;
+using _3DReconstructionWPF.Data;
 using System.Windows.Media.Media3D;
+using _3DReconstructionWPF.GUI;
 
 namespace _3DReconstructionWPF.FrameKinectView
 {
@@ -17,14 +19,17 @@ namespace _3DReconstructionWPF.FrameKinectView
         private const int BytesPerPixel = 4;
 
         private MultiSourceFrameReader _multiSourceFrameReader = null;
+        public BVH _bvh;
 
         // canvas on top of rgb color stream
         private Canvas _canvas = ((MainWindow)Application.Current.MainWindow).canvas;
+        private Renderer _renderer;
 
         Image frameDisplayImage;
-        public ColorView(Image FDI)
+        public ColorView(Image FDI,Renderer renderer)
         {
             this.frameDisplayImage = FDI;
+            _renderer = renderer;
         }
 
         public override void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -69,7 +74,7 @@ namespace _3DReconstructionWPF.FrameKinectView
             {
                 if (coloredFrame != null)
                 {
-                    frameDisplayImage.Source = ToBitmap(coloredFrame);
+                   frameDisplayImage.Source = ToBitmap(coloredFrame);
                     
                 }
             }
@@ -127,8 +132,34 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
+
+                                // canvas ray
+                                var vector = new Vector3D
+                                {
+                                    X = tipRight.Position.X - handRight.Position.X,
+                                    Y = tipRight.Position.Y - handRight.Position.Y,
+                                    Z = tipRight.Position.Z - handRight.Position.Z
+                                };
+
+
+                                var tipR = tipRight.Position;
+
+                                if (_bvh != null)
+                                {
+                                    //Ray ray = new Ray(new Point3D(tipR.X, tipR.Y, tipR.Z), vector);
+                                    Ray ray = new Ray(new Point3D(0,0,0), vector);
+                                    Intersection inter = _bvh.Intersect(ray, float.MaxValue);
+                                    if (inter._distance > 0) // Found Intersection
+                                    {
+                                        //AnnotationHandler.AddIntersectedPoint(inter._ray.GetPoint(inter._distance));
+                                        Log.writeLog("detected Hit on Sphere");
+                                        _renderer.CreatePointCloud(new Point3DCollection(inter._node._objects), Brushes.OrangeRed,false);
+                                    }
+                                }
+
+
                                 // Refresh Points
-                                if (_canvas.Children.Count > 20)
+                                while (_canvas.Children.Count > 10)
                                 {
                                     _canvas.Children.RemoveRange(0, 2);
                                 }
@@ -140,26 +171,29 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 thumbRight = Util.ScaleTo(thumbRight, _canvas.ActualWidth, _canvas.ActualHeight);
                                 tipRight = Util.ScaleTo(tipRight, _canvas.ActualWidth, _canvas.ActualHeight);
 
-                                var vector = new Vector3D
+                                vector = new Vector3D
                                 {
                                     X = tipRight.Position.X - handRight.Position.X,
                                     Y = tipRight.Position.Y - handRight.Position.Y,
                                     Z = tipRight.Position.Z - handRight.Position.Z
-                                } *20;
+                                }*10;
 
 
                                 var thumbR = thumbRight.Position;
                                 var thumbRPoint3D = new Point3D(thumbR.X, thumbR.Y, thumbR.Z);
 
 
-                                var tipR = tipRight.Position;
+                                tipR = tipRight.Position;
                                 var tipRPoint3D = new Point3D(tipR.X, tipR.Y, tipR.Z);
 
-                                //Util.DrawLine(_canvas, tipRPoint3D, tipRPoint3D + vector);
+                                Util.DrawLine(_canvas, tipRPoint3D, tipRPoint3D + vector,Colors.Violet,2);
 
                                 BuildBoundingBoxAroundLeftArm(
                                     Util.ScaleTo(tipLeft, _canvas.ActualWidth, _canvas.ActualHeight),
                                     Util.ScaleTo(elbowLeft, _canvas.ActualWidth, _canvas.ActualHeight));
+
+
+
 
                             }
                         }

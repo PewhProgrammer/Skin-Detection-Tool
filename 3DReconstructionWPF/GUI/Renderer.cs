@@ -16,7 +16,7 @@ namespace _3DReconstructionWPF.GUI
         private Model3DGroup group;
         MeshGeometry3D pointCloudMesh;
 
-        private float _drawSize = 0.0135f;
+        private float _drawSize = 0.00135f;
 
         public Renderer(Model3DGroup group)
         {
@@ -26,16 +26,34 @@ namespace _3DReconstructionWPF.GUI
 
         public void CreatePointCloud(Point3DCollection points,Brush br)
         {
-            if(group.Children.Count == 7)
-            group.Children.RemoveAt(6);
+            CreatePointCloud(points, br, true);
+        }
+
+        public void CreatePointCloud(Point3DCollection points, Brush br, bool refreshGUI)
+        {
+            if (refreshGUI)
+            {
+
+                if (group.Children.Count == 7)
+                    group.Children.RemoveAt(6);
+            }
+            else
+            {
+                if (group.Children.Count >= 3)
+                {
+                    var k = (GeometryModel3D)group.Children.ElementAt(group.Children.Count - 1);
+                    k.Material = new DiffuseMaterial(new SolidColorBrush(Colors.White));
+                }
+            }
+
             pointCloudMesh = new MeshGeometry3D();
             for (int i = 0; i < points.Count; i++)
             {
                 //System.Threading.Thread.Sleep(1);
                 //Log.writeLog("Point created: (" + points[i].X+","+points[i].Y+","+points[i].Z+")");
 
-               
-                AddCubeToMesh(pointCloudMesh, points[i], 0.0018f); //0.0018 is default
+
+                AddCubeToMesh(pointCloudMesh, points[i], _drawSize); //0.0018 is default
             }
             Log.writeLog(points.Count + " vertices found");
 
@@ -79,7 +97,7 @@ namespace _3DReconstructionWPF.GUI
             {
                 Point3D point = new Point3D(0, 0, i/5.0f);
                 //Log.writeLog("Axis Point created: " + "(" + point.X + ", " + point.Y + ", " + point.Z + ")");
-                AddCubeToMesh(axisMesh, point, _drawSize);
+                AddCubeToMesh(axisMesh, point, 0.005);
             }
 
             AddToScene(axisMesh, Brushes.Blue);

@@ -24,7 +24,7 @@ namespace _3DReconstructionWPF.FrameKinectView
         public PointCloudView(Renderer rend)
         {
             this.renderer = rend;
-            initPCV();
+            InitPCV();
         }
 
 
@@ -33,7 +33,7 @@ namespace _3DReconstructionWPF.FrameKinectView
             //initPCV();
         }
 
-        private void initPCV()
+        private void InitPCV()
         {
             this.sensor = KinectSensor.GetDefault();
 
@@ -108,10 +108,7 @@ namespace _3DReconstructionWPF.FrameKinectView
                 {
                     var description = bodyIndexFrame.FrameDescription;
                     array = new byte[description.Width * description.Height];
-
                     bodyIndexFrame.CopyFrameDataToArray(array);
-
-                    float k = 2;
                 }
             }
 
@@ -124,6 +121,8 @@ namespace _3DReconstructionWPF.FrameKinectView
             int width = depthFrame.FrameDescription.Width;
 
             CameraSpacePoint[] depth2xyz = new CameraSpacePoint[height * width];
+            CameraSpacePoint shoulderPos = new CameraSpacePoint();
+            BBox box = new BBox();
 
             using (var bodyFrame = frame.BodyFrameReference.AcquireFrame())
             {
@@ -153,8 +152,18 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 Joint handLeft = body.Joints[JointType.HandLeft];
                                 Joint thumbLeft = body.Joints[JointType.ThumbLeft];
 
+
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
+
+                                // shoulder
+                                shoulderPos = body.Joints[JointType.ShoulderLeft].Position;
+
+                                //box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(shoulderPos));
+                                box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position));
+                                box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(handLeft.Position));
+                                box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position));
+                                box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position));
 
                                 var vector = new Vector3D
                                 {
@@ -172,7 +181,8 @@ namespace _3DReconstructionWPF.FrameKinectView
                                     Intersection inter = _bvh.Intersect(ray, float.MaxValue);
                                     if(inter._distance > 0) // Found Intersection
                                     {
-                                        AnnotationHandler.AddIntersectedPoint(inter._ray.GetPoint(inter._distance));
+                                        //AnnotationHandler.AddIntersectedPoint(inter._ray.GetPoint(inter._distance));
+                                        Log.writeLog("detected Hit on Sphere");
                                     }
                                 }
                             }
@@ -184,13 +194,22 @@ namespace _3DReconstructionWPF.FrameKinectView
             ushort[] depthFrameData = new ushort[height * width];
 
             depthFrame.CopyFrameDataToArray(depthFrameData);
+            var radius = 0.1f;
 
             // Process depth frame data...
             cM.MapDepthFrameToCameraSpace(depthFrameData, depth2xyz);
 
             for (int i = 0; i < depthFrameData.Length; i++)
             {
-                if (array[i] == 255)
+                //filter everything around the box
+                if (array[i] == 255 || 
+                    (box.GetMaxPoint().Z + radius) < depth2xyz[i].Z ||
+                     (box.GetMaxPoint().Y + radius) < depth2xyz[i].Y ||
+                      (box.GetMaxPoint().X + radius) < depth2xyz[i].X ||
+                      (box.GetMinPoint().Z - radius) > depth2xyz[i].Z ||
+                     (box.GetMinPoint().Y - radius) > depth2xyz[i].Y ||
+                      (box.GetMinPoint().X - radius) > depth2xyz[i].X
+                      )
                 {
                     depth2xyz[i].Z = -10000;
                 }
@@ -243,6 +262,8 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
                                 Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)
                                 );
+
+                                Point3D k = collection[0];
 
                                 for (int i = 0; i < collection.Count; i++)
                                 {

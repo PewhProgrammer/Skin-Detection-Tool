@@ -118,7 +118,7 @@ namespace _3DReconstructionWPF.Computation
         public static Point3DCollection GetPopulatedPointCloud(Point3D p)
         {
             Point3DCollection result = new Point3DCollection();
-            float countPoints = 8;
+            float countPoints = 12;
 
             result.Add(p);
 
@@ -126,14 +126,29 @@ namespace _3DReconstructionWPF.Computation
             {
                 double a = (i / 100.0f);
                 
-                result.Add(new Point3D(p.X - a,p.Y,p.X));
-                result.Add(new Point3D(p.X + a, p.Y, p.X));
+                /*
+                result.Add(new Point3D(p.X - a,p.Y,p.Z));
+                result.Add(new Point3D(p.X + a, p.Y, p.Z));
 
                 result.Add(new Point3D(p.X, p.Y - a, p.Z));
                 result.Add(new Point3D(p.X, p.Y + a, p.Z));
 
                 result.Add(new Point3D(p.X, p.Y, p.Z - a));
                 result.Add(new Point3D(p.X, p.Y, p.Z + a));
+                */
+
+                result.Add(new Point3D(p.X - a, p.Y - a, p.Z + a));
+                result.Add(new Point3D(p.X + a, p.Y - a , p.Z + a));
+
+                result.Add(new Point3D(p.X - a, p.Y - a, p.Z - a));
+                result.Add(new Point3D(p.X + a, p.Y - a, p.Z - a));
+
+                result.Add(new Point3D(p.X - a, p.Y + a, p.Z - a));
+                result.Add(new Point3D(p.X + a, p.Y + a, p.Z - a));
+
+                result.Add(new Point3D(p.X - a, p.Y + a, p.Z + a));
+                result.Add(new Point3D(p.X + a, p.Y + a, p.Z + a));
+
             }
 
             return result;
