@@ -10,17 +10,27 @@ namespace _3DReconstructionWPF.Data
     class Intersection
     {
         public Ray _ray {get;set;}
-        public BBox _box { get; set; }
+        public Node _node { get; set; }
 
         public float _distance { get; set; }
 
         public Intersection() { }
 
-        public Intersection(Ray r, BBox b, float d)
+        public Intersection(Ray r, Node n, float d)
         {
             _ray = r;
-            _box = b;
+            _node = n;
             _distance = d;
+        }
+
+        public bool Hit()
+        {
+            return _distance > 0;
+        }
+
+        public static Intersection Failure()
+        {
+            return new Intersection(null, null, -1);
         }
     }
 }

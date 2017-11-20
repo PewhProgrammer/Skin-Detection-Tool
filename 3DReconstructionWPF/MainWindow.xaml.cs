@@ -100,19 +100,30 @@ namespace _3DReconstructionWPF
 
             var transform = Util.ComputeInitialTransformation(refPoint, transPoint);
 
-            Ray ray = new Ray(new Point3D(0, 0, 10), new Vector3D(0.1f, 0.1f, -1));
+            Ray ray = new Ray(new Point3D(0, 0, 10), new Vector3D(0.01f, 0.08f, -1));
             BBox box = new BBox(new Point3D(-1, -1, -1), new Point3D(1, 1, 1));
             var hit = box.Intersect(ray);
 
             var structure = new BVH();
             var points = _renderer.ReadData();
+            Point3D p = new Point3D();
             for(int i = 0; i < points.Count; i++)
             {
                 structure.AddToScene(points[i]);
+                p = points[i];
             }
             structure.InitIndexing();
 
+            Intersection inter = structure.Intersect(ray, float.MaxValue);
+            if (inter.Hit())
+            {
 
+                Log.writeLog("Hit detected!!");
+            }
+
+            Point3DCollection collection = new Point3DCollection(inter._node._objects);
+
+            _renderer.CreatePointCloud(collection, Brushes.White);
             Log.writeLog("test end");
 
             /// TEST END ///
@@ -161,12 +172,10 @@ namespace _3DReconstructionWPF
             _reference = _displayPointCloud;
             _referenceFeatures = _readingFeatures;
 
-            var depthData = _pcv.GetDepthDataFromLatestFrame();
-
-
+            /*var depthData = _pcv.GetDepthDataFromLatestFrame();
             _displayPointCloud = depthData.Item1;
-            _readingFeatures = depthData.Item2;
-            //displayPointCloud = rend.ReadData();
+            _readingFeatures = depthData.Item2;*/
+            _displayPointCloud = _renderer.ReadData();
 
 
             if (_displayPointCloud != null)
