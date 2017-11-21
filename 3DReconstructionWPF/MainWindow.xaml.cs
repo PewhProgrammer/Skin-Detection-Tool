@@ -158,19 +158,24 @@ namespace _3DReconstructionWPF
             _reference = _displayPointCloud;
             _referenceFeatures = _readingFeatures;
 
+            var point1 = new Point3D(-0.8f, 0, 0);
+            var point2 = new Point3D(-1f, 0, 0);
+            var point3 = new Point3D(-0.6f, 0.5f, 0);
+            var point4 = new Point3D(0.8f, -0.5f, 0);
+            _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1,point2,point3,point4);
+            _readingFeatures = _displayPointCloud;
 
-
-            var depthData = _pcv.GetDepthDataFromLatestFrame();
-            _displayPointCloud = depthData.Item1;
-            _readingFeatures = depthData.Item2;
+            /* var depthData = _pcv.GetDepthDataFromLatestFrame();
+             _displayPointCloud = depthData.Item1;
+             _readingFeatures = depthData.Item2;*/
             if (_referenceFeatures == null) _thumbReference = _readingFeatures[0];
-            else _thumbReading = _readingFeatures[0];
+             else _thumbReading = _readingFeatures[0];
 
-            _displayPointCloud = depthData.Item2;
+             //_displayPointCloud = depthData.Item2;
+
 
 
             //_displayPointCloud = _renderer.ReadData();
-
             //_rgbv._bvh = BVH.InitBVH(_displayPointCloud);
 
             if (_displayPointCloud != null)
@@ -193,6 +198,9 @@ namespace _3DReconstructionWPF
                 -rotationAngle, rotationAngle, 0, 0,
                 0, 0, 1, 0,
                 1, 0, 0, 1);
+
+                    //Tansform the thumb according to m
+                    _thumbReading = m.Transform(_readingFeatures[0]);
 
                     _displayPointCloud = Util.RotatePoint3DCollection(_displayPointCloud, m);
                     _readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);

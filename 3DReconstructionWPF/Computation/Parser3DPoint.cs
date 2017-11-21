@@ -118,7 +118,7 @@ namespace _3DReconstructionWPF.Computation
         public static Point3DCollection GetPopulatedPointCloud(Point3D p)
         {
             Point3DCollection result = new Point3DCollection();
-            float countPoints = 12;
+            float countPoints = 24;
 
             result.Add(p);
 
@@ -150,6 +150,52 @@ namespace _3DReconstructionWPF.Computation
                 result.Add(new Point3D(p.X + a, p.Y + a, p.Z + a));
 
             }
+
+            return result;
+        }
+
+        public static Point3DCollection GetPopulatedPointCloud(Point3D p,Point3D q, Point3D a, Point3D b)
+        {
+            Point3DCollection result = new Point3DCollection();
+
+            Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
+            p
+            );
+
+            Point3D k = collection[0];
+
+            for (int i = 0; i < collection.Count; i++)
+            {
+                result.Add(collection[i]);
+            }
+
+            collection = Parser3DPoint.GetPopulatedPointCloud(
+            q
+            );
+
+            for (int i = 0; i < collection.Count; i++)
+            {
+                result.Add(collection[i]);
+            }
+
+            collection = Parser3DPoint.GetPopulatedPointCloud(
+            a
+            );
+
+            for (int i = 0; i < collection.Count; i++)
+            {
+                result.Add(collection[i]);
+            }
+
+            collection = Parser3DPoint.GetPopulatedPointCloud(
+            b
+            );
+
+            for (int i = 0; i < collection.Count; i++)
+            {
+                result.Add(collection[i]);
+            }
+
 
             return result;
         }
