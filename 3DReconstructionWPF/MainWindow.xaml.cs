@@ -39,13 +39,12 @@ namespace _3DReconstructionWPF
         private Point3D _cameraPosition = new Point3D(0.2, 0.2, 5);
         private Point3D _thumbReading, _thumbReference;
         private Transform3D _cameraFoval = new TranslateTransform3D(new Vector3D(0, 0, 0));
+        private pointmatcher.net.EuclideanTransform _initialTransformation;
 
         private KinectSensor _sensor;
 
         private ICP _icp;
         private ICP.ICPData _icpData;
-
-        private BVH _structure = null;
 
         private Point3DCollection _displayPointCloud;
         private Point3DCollection _reference;
@@ -64,6 +63,9 @@ namespace _3DReconstructionWPF
         {
             Init();
             SetupCurrentDisplay(DEFAULT_FRAMETYPE);
+
+            /// TEST ///
+            //ExecuteTests();
         }
 
         private void SetupCurrentDisplay(FrameType display)
@@ -100,13 +102,14 @@ namespace _3DReconstructionWPF
             var points = _renderer.ReadData();
             _rgbv._bvh = BVH.InitBVH(points);
 
-            Intersection inter = _structure.Intersect(ray, float.MaxValue);
+            Intersection inter = _rgbv._bvh.Intersect(ray, float.MaxValue);
             if (inter.Hit()) Log.writeLog("Hit detected!!");
 
             Point3DCollection collection = new Point3DCollection(inter._node._objects);
 
             //_renderer.CreatePointCloud(collection, Brushes.White);
             Log.writeLog("test end");
+
 
             /// TEST END ///
         }
@@ -119,30 +122,20 @@ namespace _3DReconstructionWPF
             _renderer = new Renderer(group);
             _pcv = new PointCloudView(_renderer);
 
-            /// TEST ///
-            //ExecuteTests();
-
             _sensor = KinectSensor.GetDefault();
-            var rotationAngle = 0.707106781187f; // 0.707106781187f
 
-            pointmatcher.net.EuclideanTransform trans = new pointmatcher.net.EuclideanTransform
+            _initialTransformation = new pointmatcher.net.EuclideanTransform
             {
-                translation = System.Numerics.Vector3.UnitX,
-                rotation = System.Numerics.Quaternion.CreateFromRotationMatrix(new System.Numerics.Matrix4x4(
-                    rotationAngle, rotationAngle, 0, 0,
-                        -rotationAngle, rotationAngle, 0, 0,
-                        0, 0, 1, 0,
-                        1, 0, 0, 1
-                    )),
-                /*rotation = System.Numerics.Quaternion.Normalize(System.Numerics.Quaternion.CreateFromRotationMatrix(new System.Numerics.Matrix4x4(
+                translation = System.Numerics.Vector3.Zero,
+                rotation = System.Numerics.Quaternion.Normalize(System.Numerics.Quaternion.CreateFromRotationMatrix(new System.Numerics.Matrix4x4(
                         1, 0, 0, 0,
                         0, 1, 0, 0,
                         0, 0, 1, 0,
                         0, 0, 0, 1
-                    )))*/
+                    )))
             };
 
-            _icpData = new ICP.ICPData(null, trans);
+            _icpData = new ICP.ICPData(null, _initialTransformation);
             _icp = new ICP();
             label_Cycle.Content = "cycle: " + _cycleRuns;
 
@@ -158,18 +151,11 @@ namespace _3DReconstructionWPF
             _reference = _displayPointCloud;
             _referenceFeatures = _readingFeatures;
 
-            var point1 = new Point3D(-0.8f, 0, 0);
-            var point2 = new Point3D(-1f, 0, 0);
-            var point3 = new Point3D(-0.6f, 0.5f, 0);
-            var point4 = new Point3D(0.8f, -0.5f, 0);
-            _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1,point2,point3,point4);
-            _readingFeatures = _displayPointCloud;
 
             /* var depthData = _pcv.GetDepthDataFromLatestFrame();
              _displayPointCloud = depthData.Item1;
              _readingFeatures = depthData.Item2;*/
-            if (_referenceFeatures == null) _thumbReference = _readingFeatures[0];
-             else _thumbReading = _readingFeatures[0];
+
 
              //_displayPointCloud = depthData.Item2;
 
@@ -178,42 +164,52 @@ namespace _3DReconstructionWPF
             //_displayPointCloud = _renderer.ReadData();
             //_rgbv._bvh = BVH.InitBVH(_displayPointCloud);
 
-            if (_displayPointCloud != null)
-            {
+                var point1 = new Point3D(-0.8f, 0, 0);
+                var point2 = new Point3D(-1f, 0, 0);
+                var point3 = new Point3D(-0.6f, 0.5f, 0);
+                var point4 = new Point3D(0.8f, -0.5f, 0);
 
-                if (_cycleRuns > 0)
+                if (_cycleRuns == 0)
                 {
+                    _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1, point2, point3, point4,_initialTransformation);
+                    _readingFeatures = _displayPointCloud;
+
+                    _thumbReference = _readingFeatures[0];
+
+                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
+                }
+                else {
                     Log.writeLog("--------------------");
 
                     var rotationAngle = 0.707106781187f;
 
                     Matrix3D m = new Matrix3D(
-               rotationAngle, 0, rotationAngle, 0,
-                0, 1, 0, 0,
+                    rotationAngle, 0, rotationAngle, 0,
+                    0, 1, 0, 0,
                 -rotationAngle, 0, rotationAngle, 0,
-                1, 0, 0, 1);
+                    1, 0, 0, 1);
 
                     m = new Matrix3D(
-               rotationAngle, rotationAngle, 0, 0,
-                -rotationAngle, rotationAngle, 0, 0,
-                0, 0, 1, 0,
-                1, 0, 0, 1);
+                    rotationAngle, rotationAngle, 0, 0,
+                    -rotationAngle, rotationAngle, 0, 0,
+                    0, 0, 1, 0,
+                    1, 0, 0, 1);
 
-                    //Tansform the thumb according to m
+                    // Transform the thumb according to m
                     _thumbReading = m.Transform(_readingFeatures[0]);
+
+                    _initialTransformation = Util.ComputeInitialTransformation(_thumbReference, _thumbReading);
+                    _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1, point2, point3, point4, _initialTransformation);
+                    _readingFeatures = _displayPointCloud;
 
                     _displayPointCloud = Util.RotatePoint3DCollection(_displayPointCloud, m);
                     _readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);
 
-
                     _renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
-                }
-                else _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
+                } 
 
                 _cycleRuns++;
                 label_Cycle.Content = "cycle: " + _cycleRuns;
-            }
-            else Log.writeLog("Could not retrieve depth frame");
 
         }
 
@@ -237,13 +233,11 @@ namespace _3DReconstructionWPF
             // As far as i know, source[i] maps to reference[i]
             // compute initial transformation
 
-            var initialTransformation = Util.ComputeInitialTransformation( _thumbReference, _thumbReading);
-
             //compute transformation from reference
             _icpData = _icp.ComputeICP(
                 Parser3DPoint.FromPoint3DToDataPoints(source),
                 Parser3DPoint.FromPoint3DToDataPoints(reference),
-                initialTransformation);
+                _initialTransformation);
 
             var p = ICP.ApplyTransformation(_icpData.transform,Parser3DPoint.FromPoint3DToDataPoints(_displayPointCloud));
             _displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(p);
@@ -309,36 +303,6 @@ namespace _3DReconstructionWPF
                 }
             }
             Log.writeLog("Saved the point cloud");
-        }
-
-        private void Readjust_Click(object sender, RoutedEventArgs e)
-        {
-
-
-            _displayPointCloud = _pcv.GetDepthDataFromLatestFrame().Item1;
-            //displayPointCloud = rend.ReadData();
-
-            if (_displayPointCloud != null)
-            {
-
-                Log.writeLog("--------------------");
-                BVH bvh = new BVH();
-                for (int i = 0; i < _displayPointCloud.Count; i++)
-                {
-                    bvh.AddToScene(_displayPointCloud[i]);
-                }
-
-
-                if (_cycleRuns > 0)
-                {
-                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
-                }
-                else _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
-
-                _cycleRuns++;
-                label_Cycle.Content = "cycle: " + _cycleRuns;
-            }
-            else Log.writeLog("Could not retrieve depth frame");
         }
 
         private void Annotate_Click(object sender, RoutedEventArgs e)

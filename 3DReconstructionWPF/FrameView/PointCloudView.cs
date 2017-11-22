@@ -259,7 +259,7 @@ namespace _3DReconstructionWPF.FrameKinectView
 
                                 Point3DCollection result = new Point3DCollection();
 
-                                Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
+                                /*Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
                                 Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)
                                 );
 
@@ -295,7 +295,7 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 for (int i = 0; i < collection.Count; i++)
                                 {
                                     result.Add(collection[i]);
-                                }
+                                }*/
 
 
                                 return result;

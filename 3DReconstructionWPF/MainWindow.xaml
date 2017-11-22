@@ -16,9 +16,6 @@
 
         <DockPanel Margin="27,0,0,0"  Background="DarkSlateGray" Grid.Column="1" />
 
-        <Button x:Name="AnimationResume1" Content="Animate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="10,611,0,0"/>
-        <Button x:Name="AnimationPause" Content="Stop"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="137,611,0,0"/>
-
         <Border  MouseLeftButtonDown="OnDragSourceMouseLeftButtonDown" 
                    MouseLeftButtonUp="OnDragSourceMouseLeftButtonUp" 
                    MouseMove="OnDragSourceMouseMove"
@@ -69,7 +66,7 @@
 
         NearPlaneDistance="0"  LookDirection="0,0,10" 
                         UpDirection="0,1,0"
-            Position="0.2,0.2,-3.3" FieldOfView="45" />
+            Position="0.2,0.2,-5.3" FieldOfView="45" />
                 </Viewport3D.Camera>
 
                 <ModelVisual3D x:Name="model">
@@ -115,7 +112,6 @@
 
         </Border>
         <Button x:Name="button_Copy5" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,246,0,0" Grid.Column="1"/>
-        <Button x:Name="button_Copy4" Content="Readjust PC"  Click="Readjust_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,452,0,0" Grid.Column="1"/>
         <Button x:Name="button" Content="Start Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="70,523,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
 
         <Canvas Background="Gray" HorizontalAlignment="Left" Height="38" Margin="32,180,0,0" VerticalAlignment="Top" Width="295" Grid.Column="1"/>
@@ -137,7 +133,7 @@
    Width="305"  
    Height="149" Margin="27,592,0,0" Grid.Column="1"/>
         <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="196,523,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
-        <Button x:Name="button_SavePC" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="834,612,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
+        <Button x:Name="button_SavePC" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="10,611,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
         <Button x:Name="button_TrackFeaturePoints" Content="Scan Features"  Click="ScanFeatures_Click" HorizontalAlignment="Left" Margin="70,312,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
 
 

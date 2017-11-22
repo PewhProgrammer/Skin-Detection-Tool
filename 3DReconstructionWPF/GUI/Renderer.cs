@@ -16,7 +16,7 @@ namespace _3DReconstructionWPF.GUI
         private Model3DGroup group;
         MeshGeometry3D pointCloudMesh;
 
-        private float _drawSize = 0.00135f;
+        private float _drawSize = 0.0135f;
 
         public Renderer(Model3DGroup group)
         {

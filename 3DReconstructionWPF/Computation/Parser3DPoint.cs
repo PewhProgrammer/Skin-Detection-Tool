@@ -36,6 +36,19 @@ namespace _3DReconstructionWPF.Computation
             return result;
         }
 
+        public static DataPoint FromPoint3DToDataPoint(Point3D points)
+        {
+                Vector3 n = new Vector3(0, 1, 0);
+                Vector3 vec = new Vector3((float)points.X, (float)points.Y, (float)points.Z);
+                DataPoint dp = new DataPoint
+                {
+                    point = vec,
+                    normal = n
+                };
+
+            return dp;
+        }
+
         public static Point3DCollection FromDataPointsToPoint3DCollection(DataPoints dp)
         {
             Point3DCollection result = new Point3DCollection(dp.points.Length);
@@ -115,7 +128,7 @@ namespace _3DReconstructionWPF.Computation
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public static Point3DCollection GetPopulatedPointCloud(Point3D p)
+        public static Point3DCollection GetPopulatedPointCloud(Point3D p, EuclideanTransform transform)
         {
             Point3DCollection result = new Point3DCollection();
             float countPoints = 24;
@@ -124,8 +137,8 @@ namespace _3DReconstructionWPF.Computation
 
             for (int i = 0; i < countPoints; i++)
             {
-                double a = (i / 100.0f);
-                
+                double a = ((double)i / 100.0f);
+
                 /*
                 result.Add(new Point3D(p.X - a,p.Y,p.Z));
                 result.Add(new Point3D(p.X + a, p.Y, p.Z));
@@ -137,29 +150,39 @@ namespace _3DReconstructionWPF.Computation
                 result.Add(new Point3D(p.X, p.Y, p.Z + a));
                 */
 
-                result.Add(new Point3D(p.X - a, p.Y - a, p.Z + a));
-                result.Add(new Point3D(p.X + a, p.Y - a , p.Z + a));
+                result.Add(_transformPoint3D(new Point3D(p.X - a, p.Y - a, p.Z + a), p, transform));
+                result.Add(_transformPoint3D(new Point3D(p.X + a, p.Y - a, p.Z + a), p, transform));
 
-                result.Add(new Point3D(p.X - a, p.Y - a, p.Z - a));
-                result.Add(new Point3D(p.X + a, p.Y - a, p.Z - a));
+                result.Add(_transformPoint3D(new Point3D(p.X - a, p.Y - a, p.Z - a), p, transform));
+                result.Add(_transformPoint3D(new Point3D(p.X + a, p.Y - a, p.Z - a), p, transform));
 
-                result.Add(new Point3D(p.X - a, p.Y + a, p.Z - a));
-                result.Add(new Point3D(p.X + a, p.Y + a, p.Z - a));
+                result.Add(_transformPoint3D(new Point3D(p.X - a, p.Y + a, p.Z + a), p, transform));
+                result.Add(_transformPoint3D(new Point3D(p.X + a, p.Y + a, p.Z + a), p, transform));
 
-                result.Add(new Point3D(p.X - a, p.Y + a, p.Z + a));
-                result.Add(new Point3D(p.X + a, p.Y + a, p.Z + a));
+                result.Add(_transformPoint3D(new Point3D(p.X - a, p.Y + a, p.Z - a), p, transform));
+                result.Add(_transformPoint3D(new Point3D(p.X + a, p.Y + a, p.Z - a), p, transform));
 
             }
 
             return result;
         }
 
-        public static Point3DCollection GetPopulatedPointCloud(Point3D p,Point3D q, Point3D a, Point3D b)
+        private static Point3D _transformPoint3D(Point3D p, Point3D origin, EuclideanTransform transform)
         {
+            var vectorRotationFocus = p - origin;
+            var transformedPoint = transform.Apply(Parser3DPoint.FromPoint3DToDataPoint(new Point3D(vectorRotationFocus.X, vectorRotationFocus.Y, vectorRotationFocus.Z)).point);
+            return new Point3D(transformedPoint.X+ origin.X, transformedPoint.Y + origin.Y, transformedPoint.Z + origin.Z);
+        }
+
+        public static Point3DCollection GetPopulatedPointCloud(Point3D p,Point3D q, Point3D a, Point3D b, EuclideanTransform transformation)
+        {
+
+            // only keep rotation of initaltransformation matrix
+            transformation.translation = System.Numerics.Vector3.Zero;
             Point3DCollection result = new Point3DCollection();
 
             Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
-            p
+            p ,transformation
             );
 
             Point3D k = collection[0];
@@ -170,7 +193,7 @@ namespace _3DReconstructionWPF.Computation
             }
 
             collection = Parser3DPoint.GetPopulatedPointCloud(
-            q
+            q, transformation
             );
 
             for (int i = 0; i < collection.Count; i++)
@@ -179,7 +202,7 @@ namespace _3DReconstructionWPF.Computation
             }
 
             collection = Parser3DPoint.GetPopulatedPointCloud(
-            a
+            a, transformation
             );
 
             for (int i = 0; i < collection.Count; i++)
@@ -188,7 +211,7 @@ namespace _3DReconstructionWPF.Computation
             }
 
             collection = Parser3DPoint.GetPopulatedPointCloud(
-            b
+            b, transformation
             );
 
             for (int i = 0; i < collection.Count; i++)

@@ -146,7 +146,7 @@ namespace _3DReconstructionWPF.Computation
             return new Tuple<float, float>(0, 0);
         }
 
-        public static BVH  InitBVH(Point3DCollection points)
+        public static BVH InitBVH(Point3DCollection points)
         {
             BVH _structure = new BVH();
             for (int i = 0; i < points.Count; i++)
