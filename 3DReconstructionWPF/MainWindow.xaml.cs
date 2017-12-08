@@ -76,7 +76,7 @@ namespace _3DReconstructionWPF
                 case FrameType.Infrared:
                     break;
                 case FrameType.Color:
-                    _rgbv = new ColorView(FrameDisplayImage,_renderer);
+                    _rgbv = new ColorView(FrameDisplayImage, _renderer);
                     AddDisplay(_rgbv);
                     break;
                 case FrameType.BodyMask:
@@ -139,7 +139,7 @@ namespace _3DReconstructionWPF
             _icp = new ICP();
             label_Cycle.Content = "cycle: " + _cycleRuns;
 
-            if (_sensor != null)  { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
+            if (_sensor != null) { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
 
 
         }
@@ -157,59 +157,87 @@ namespace _3DReconstructionWPF
              _readingFeatures = depthData.Item2;*/
 
 
-             //_displayPointCloud = depthData.Item2;
+            //_displayPointCloud = depthData.Item2;
 
 
 
             //_displayPointCloud = _renderer.ReadData();
             //_rgbv._bvh = BVH.InitBVH(_displayPointCloud);
 
-                var point1 = new Point3D(-0.8f, 0, 0);
-                var point2 = new Point3D(-1f, 0, 0);
-                var point3 = new Point3D(-0.6f, 0.5f, 0);
-                var point4 = new Point3D(0.8f, -0.5f, 0);
+            var point1 = new Point3D(-0.8f, 0, 0);
+            var point2 = new Point3D(-1f, 0, 0);
+            var point3 = new Point3D(-0.6f, 0.5f, 0);
+            var point4 = new Point3D(0.8f, -0.5f, 0);
 
-                if (_cycleRuns == 0)
+            var pcReference = new Point3DCollection
                 {
-                    _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1, point2, point3, point4,_initialTransformation);
-                    _readingFeatures = _displayPointCloud;
+                    point1,
+                    point2,
+                    point3
+                };
 
-                    _thumbReference = _readingFeatures[0];
+            if (_cycleRuns == 0)
+            {
+                // populate all feature points
+                _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1, point2, point3, point4, _initialTransformation);
+                _readingFeatures = _displayPointCloud;
 
-                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
-                }
-                else {
-                    Log.writeLog("--------------------");
+                //maintain most important feature point;
+                _thumbReference = _readingFeatures[0];
 
-                    var rotationAngle = 0.707106781187f;
+                _renderer.CreatePointCloud(_displayPointCloud, Brushes.White);
+                Log.writeLog("Scanned reference skeleton");
+            }
+            else
+            {
+                Log.writeLog("--------------------");
 
-                    Matrix3D m = new Matrix3D(
-                    rotationAngle, 0, rotationAngle, 0,
-                    0, 1, 0, 0,
+                var rotationAngle = 0.707106781187f;
+
+                Matrix3D m = new Matrix3D(
+                rotationAngle, 0, rotationAngle, 0,
+                0, 1, 0, 0,
                 -rotationAngle, 0, rotationAngle, 0,
-                    1, 0, 0, 1);
+                1, 0, 0, 1);
 
-                    m = new Matrix3D(
-                    rotationAngle, rotationAngle, 0, 0,
-                    -rotationAngle, rotationAngle, 0, 0,
-                    0, 0, 1, 0,
-                    1, 0, 0, 1);
+                // Transform the thumb according to m
+                _thumbReading = m.Transform(_readingFeatures[0]);
+                point1 = m.Transform(point1);
+                point2 = m.Transform(point2);
+                point3 = m.Transform(point3);
+                point4 = m.Transform(point4);
 
-                    // Transform the thumb according to m
-                    _thumbReading = m.Transform(_readingFeatures[0]);
+                var pcReading = new Point3DCollection
+                {
+                    point1,
+                    point2,
+                    point3
+                };
 
-                    _initialTransformation = Util.ComputeInitialTransformation(_thumbReference, _thumbReading);
-                    _displayPointCloud = Parser3DPoint.GetPopulatedPointCloud(point1, point2, point3, point4, _initialTransformation);
-                    _readingFeatures = _displayPointCloud;
+                _initialTransformation = Util.ComputeInitialTransformation(pcReading, pcReference);
 
-                    _displayPointCloud = Util.RotatePoint3DCollection(_displayPointCloud, m);
-                    _readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);
+                pcReading.Add(point4);
+                _renderer.CreatePointCloud(pcReading, Brushes.Violet);
 
-                    _renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
-                } 
+                //_readingFeatures = Util.RotatePoint3DCollection(_readingFeatures, m);
 
-                _cycleRuns++;
-                label_Cycle.Content = "cycle: " + _cycleRuns;
+                var pc = new Point3DCollection();//Util.TransformPoint3DCollection(_readingFeatures, _initialTransformation);
+                //pc.Add(_thumbReading);
+                _thumbReading = Parser3DPoint._transformPoint3D(_thumbReading, new Point3D(0, 0, 0), _initialTransformation);
+                pc.Add(_thumbReading);
+                _thumbReading = Parser3DPoint._transformPoint3D(point2, new Point3D(0, 0, 0), _initialTransformation);
+                pc.Add(_thumbReading);
+                _thumbReading = Parser3DPoint._transformPoint3D(point3, new Point3D(0, 0, 0), _initialTransformation);
+                pc.Add(_thumbReading);
+                _thumbReading = Parser3DPoint._transformPoint3D(point4, new Point3D(0, 0, 0), _initialTransformation);
+                pc.Add(_thumbReading);
+
+                _renderer.CreatePointCloud(pc, Brushes.YellowGreen, false);
+                //_renderer.CreatePointCloud(_displayPointCloud, Brushes.YellowGreen);
+            }
+
+            _cycleRuns++;
+            label_Cycle.Content = "cycle: " + _cycleRuns;
 
         }
 
@@ -239,7 +267,9 @@ namespace _3DReconstructionWPF
                 Parser3DPoint.FromPoint3DToDataPoints(reference),
                 _initialTransformation);
 
-            var p = ICP.ApplyTransformation(_icpData.transform,Parser3DPoint.FromPoint3DToDataPoints(_displayPointCloud));
+            _icpData.transform = _initialTransformation;
+
+            var p = ICP.ApplyTransformation(_icpData.transform, Parser3DPoint.FromPoint3DToDataPoints(_displayPointCloud));
             _displayPointCloud = Parser3DPoint.FromDataPointsToPoint3DCollection(p);
 
             _renderer.CreatePointCloud(_displayPointCloud, Brushes.BlueViolet);
@@ -308,8 +338,62 @@ namespace _3DReconstructionWPF
         private void Annotate_Click(object sender, RoutedEventArgs e)
         {
             Log.writeLog("ANNOTATION NOT YET IMPLEMENTED");
-            AnnotationHandler.Annotate(_annotation);
+            //AnnotationHandler.Annotate(_annotation);
             //AnimationStoryboard.Storyboard.Pause(this);
+
+            Point3DCollection A = new Point3DCollection();
+            Point3DCollection B = new Point3DCollection();
+
+            
+            var p1 = new Point3D(-0.8f, 0, 0);
+            var p2 = new Point3D(-1f, 0, 0);
+            var p3 = new Point3D(-0.6f, 0.5f, 0);
+            
+            /*
+            var p1 = new Point3D(1, 0, 0);
+            var p2 = new Point3D(2, 0, 0);
+            var p3 = new Point3D(3, 0, 0);
+            */
+
+            B.Add(p1);
+            B.Add(p2);
+            B.Add(p3);
+
+
+            var rotationAngle = 0.707106781187f;
+
+            var m = new Matrix3D(
+            rotationAngle, rotationAngle, 0, 0,
+            -rotationAngle, rotationAngle, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1);
+
+
+            A.Add(m.Transform(p1));
+            A.Add(m.Transform(p2));
+            A.Add(m.Transform(p3));
+
+            var transform = Util.ComputeInitialTransformation(A, B);
+
+            var err = ComputeRMSE(A, B, transform);
+            if (err > 0.01f) Log.writeLog("Error derivation is too high: " + err);
+            else Log.writeLog("Error derivation is correct: " + err);
+        }
+
+        private double ComputeRMSE(Point3DCollection A, Point3DCollection B, pointmatcher.net.EuclideanTransform transform)
+        {
+            var k = System.Numerics.Vector3.One;
+            var sum = 0.0d;
+            for (int i = 0; i < B.Count; i++)
+            {
+                k = transform.Apply(new System.Numerics.Vector3((float)A[i].X, (float)A[i].Y, (float)A[i].Z));
+                var convertK = new Point3D(k.X, k.Y, k.Z);
+                var error = B[i] - convertK;
+                sum += Vector3D.DotProduct(error, error);
+
+            }
+
+            return Math.Sqrt(sum / A.Count);
         }
 
         private void OnDragSourceMouseLeftButtonDown(object sender,
@@ -341,8 +425,8 @@ namespace _3DReconstructionWPF
 
             _rotateValue += ((float)diffX * 0.008f + (float)diffY * 0.008f) * 0.5f;
 
-    
-            return new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(diffY*_scale, diffX*_scale, 0), _rotateValue));
+
+            return new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(diffY * _scale, diffX * _scale, 0), _rotateValue));
         }
 
         private void ScanFeatures_Click(object sender, RoutedEventArgs e)

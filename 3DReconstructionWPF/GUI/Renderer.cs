@@ -36,9 +36,7 @@ namespace _3DReconstructionWPF.GUI
 
                 if (group.Children.Count == 7)
                     group.Children.RemoveAt(6);
-            }
-            else
-            {
+
                 if (group.Children.Count >= 3)
                 {
                     var k = (GeometryModel3D)group.Children.ElementAt(group.Children.Count - 1);
@@ -57,10 +55,9 @@ namespace _3DReconstructionWPF.GUI
             }
             Log.writeLog(points.Count + " vertices found");
 
+            //to update
             pointCloudMesh.Freeze();
 
-            //group.Children.Clear();
-            //group.Children.
             GeometryModel3D mGeometry = new GeometryModel3D(pointCloudMesh, new DiffuseMaterial(br));
             mGeometry.Transform = new Transform3DGroup();
             group.Children.Add(mGeometry);

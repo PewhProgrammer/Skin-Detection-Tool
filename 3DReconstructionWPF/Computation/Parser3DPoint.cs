@@ -167,7 +167,7 @@ namespace _3DReconstructionWPF.Computation
             return result;
         }
 
-        private static Point3D _transformPoint3D(Point3D p, Point3D origin, EuclideanTransform transform)
+        public static Point3D _transformPoint3D(Point3D p, Point3D origin, EuclideanTransform transform)
         {
             var vectorRotationFocus = p - origin;
             var transformedPoint = transform.Apply(Parser3DPoint.FromPoint3DToDataPoint(new Point3D(vectorRotationFocus.X, vectorRotationFocus.Y, vectorRotationFocus.Z)).point);
@@ -177,9 +177,12 @@ namespace _3DReconstructionWPF.Computation
         public static Point3DCollection GetPopulatedPointCloud(Point3D p,Point3D q, Point3D a, Point3D b, EuclideanTransform transformation)
         {
 
-            // only keep rotation of initaltransformation matrix
-            transformation.translation = System.Numerics.Vector3.Zero;
             Point3DCollection result = new Point3DCollection();
+
+            // only keep rotation of initaltransformation matrix
+            transformation = transformation.Inverse();
+            transformation.translation = System.Numerics.Vector3.Zero;
+            
 
             Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
             p ,transformation
