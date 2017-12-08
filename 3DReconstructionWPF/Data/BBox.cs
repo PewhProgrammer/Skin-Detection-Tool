@@ -45,13 +45,13 @@ namespace _3DReconstructionWPF.Data
             double z = p.Z;
 
             if (x > _maxPoint.X) _maxPoint.X = x;
-            else if (x < _minPoint.X) _minPoint.X = x;
+            if (x < _minPoint.X) _minPoint.X = x;
 
             if (y > _maxPoint.Y) _maxPoint.Y = y;
-            else if (y < _minPoint.Y) _minPoint.Y = y;
+            if (y < _minPoint.Y) _minPoint.Y = y;
 
             if (z > _maxPoint.Z) _maxPoint.Z = z;
-            else if (z < _minPoint.Z) _minPoint.Z = z;
+            if (z < _minPoint.Z) _minPoint.Z = z;
         }
 
         public Tuple<float,float> Intersect(Ray ray)

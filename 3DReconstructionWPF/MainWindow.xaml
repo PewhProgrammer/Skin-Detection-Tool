@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="769" Width="1270">
 
-    <Grid Background="DarkSlateGray" Margin="0,0,-8,-3">
+    <Grid MouseWheel="Grid_MouseWheel" Background="DarkSlateGray" Margin="0,0,-8,-3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="469*"/>
             <ColumnDefinition Width="166*"/>
@@ -111,8 +111,8 @@
    Height="741" Margin="27,0,0,0" Grid.Column="1">
 
         </Border>
-        <Button x:Name="button_Copy5" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,246,0,0" Grid.Column="1"/>
-        <Button x:Name="button" Content="Start Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="70,523,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
+        <Button x:Name="button_Copy5" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,523,0,0" Grid.Column="1"/>
+        <Button x:Name="button" Content="Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="70,300,0,0" VerticalAlignment="Top" Width="100" Height="46" Grid.Column="1"/>
 
         <Canvas Background="Gray" HorizontalAlignment="Left" Height="38" Margin="32,180,0,0" VerticalAlignment="Top" Width="295" Grid.Column="1"/>
         <Label x:Name="label_Copy1" Content="Kinect Color View"  FontSize="26" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="70,175,0,0" VerticalAlignment="Top" Height="50" Width="226" Grid.Column="1"/>
@@ -134,7 +134,7 @@
    Height="149" Margin="27,592,0,0" Grid.Column="1"/>
         <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="196,523,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
         <Button x:Name="button_SavePC" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="10,611,0,0" VerticalAlignment="Top" Width="100" Height="47"/>
-        <Button x:Name="button_TrackFeaturePoints" Content="Scan Features"  Click="ScanFeatures_Click" HorizontalAlignment="Left" Margin="70,312,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
+        <Button x:Name="button_TrackFeaturePoints" Content="Create reference"  Click="ScanFeatures_Click" HorizontalAlignment="Left" Margin="70,230,0,0" VerticalAlignment="Top" Width="100" Height="47" Grid.Column="1"/>
 
 
     </Grid>

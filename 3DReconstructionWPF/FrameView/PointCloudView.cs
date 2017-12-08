@@ -7,6 +7,7 @@ using System.Windows;
 using Microsoft.Kinect;
 using _3DReconstructionWPF.GUI;
 using System.Windows.Media.Media3D;
+using System.Windows.Media;
 
 using _3DReconstructionWPF.Computation;
 using _3DReconstructionWPF.Data;
@@ -194,7 +195,7 @@ namespace _3DReconstructionWPF.FrameKinectView
             ushort[] depthFrameData = new ushort[height * width];
 
             depthFrame.CopyFrameDataToArray(depthFrameData);
-            var radius = 0.1f;
+            var radius = 0.08f;
 
             // Process depth frame data...
             cM.MapDepthFrameToCameraSpace(depthFrameData, depth2xyz);
@@ -214,6 +215,16 @@ namespace _3DReconstructionWPF.FrameKinectView
                     depth2xyz[i].Z = -10000;
                 }
             }
+
+            /*
+            var boxCloud = new Point3DCollection
+                {
+                    box.GetMinPoint(),
+                    box.GetMaxPoint()
+                };
+
+            renderer.CreatePointCloud(boxCloud, Brushes.DeepPink,false, 0.0235f);
+            */
             return Parser3DPoint.FromCameraSpaceToPoint3DCollection(depth2xyz, height * width);
         }
 
@@ -258,6 +269,11 @@ namespace _3DReconstructionWPF.FrameKinectView
 
 
                                 Point3DCollection result = new Point3DCollection();
+
+                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(handLeft.Position));
+                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position));
+                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position));
+                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position));
 
                                 /*Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
                                 Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)

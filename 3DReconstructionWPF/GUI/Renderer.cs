@@ -16,7 +16,7 @@ namespace _3DReconstructionWPF.GUI
         private Model3DGroup group;
         MeshGeometry3D pointCloudMesh;
 
-        private float _drawSize = 0.0135f;
+        private float _drawSize = 0.00135f;
 
         public Renderer(Model3DGroup group)
         {
@@ -26,10 +26,15 @@ namespace _3DReconstructionWPF.GUI
 
         public void CreatePointCloud(Point3DCollection points,Brush br)
         {
-            CreatePointCloud(points, br, true);
+            CreatePointCloud(points, br, true,_drawSize);
         }
 
         public void CreatePointCloud(Point3DCollection points, Brush br, bool refreshGUI)
+        {
+            CreatePointCloud(points, br, refreshGUI, _drawSize);
+        }
+
+        public void CreatePointCloud(Point3DCollection points, Brush br, bool refreshGUI, float size)
         {
             if (refreshGUI)
             {
@@ -51,7 +56,7 @@ namespace _3DReconstructionWPF.GUI
                 //Log.writeLog("Point created: (" + points[i].X+","+points[i].Y+","+points[i].Z+")");
 
 
-                AddCubeToMesh(pointCloudMesh, points[i], _drawSize); //0.0018 is default
+                AddCubeToMesh(pointCloudMesh, points[i], size); //0.0018 is default
             }
             Log.writeLog(points.Count + " vertices found");
 
@@ -62,6 +67,7 @@ namespace _3DReconstructionWPF.GUI
             mGeometry.Transform = new Transform3DGroup();
             group.Children.Add(mGeometry);
         }
+
 
         private void CreateAxis()
         {
