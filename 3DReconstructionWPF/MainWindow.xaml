@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_3DReconstructionWPF"
         mc:Ignorable="d"
-        Title="MainWindow"     ResizeMode="NoResize"
+        Title="3D Scanner for on-skin interaction"     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen" 
     Width="1366" Height="768"
     WindowState="Maximized" >
@@ -83,13 +83,31 @@
                 <TabItem Header="Action">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="115*"/>
-                            <ColumnDefinition Width="174*"/>
+                            <ColumnDefinition Width="0*"/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="button_TrackFeaturePoints" Content="Create reference"  Click="ScanFeatures_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="28" Margin="10,307,0,0"/>
-                        <Button x:Name="button_Annotate" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="47" Margin="70,523,0,0" Grid.Column="1"/>
-                        <Button x:Name="button_Scan" Content="Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="61" Height="25" Grid.Column="1"/>
-                        <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="10,349,0,0" VerticalAlignment="Top" Width="100" Height="25"/>
+                        <Label x:Name="label_StatusDescription" Content="Status:" FontSize="12" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_Status" Content="refreshing..." FontSize="12" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_StatusTrackedFeature" Content="Feature Detection"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,36,0,0" VerticalAlignment="Top" Height="24" Width="91" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_StatusRGBColor" Content="RGBColor"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,62,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_StatusDepth" Content="Depth"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,88,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
+                        <Image x:Name="image_trackedFeature"  Margin="16,39,255,336"  Grid.ColumnSpan="2" />
+                        <Image x:Name="image_rgbColor"  Margin="16,65,255,310"  Grid.ColumnSpan="2" />
+                        <Image x:Name="image_depth"  Margin="16,91,255,284"  Grid.ColumnSpan="2" />
+                        <Rectangle  VerticalAlignment="Stretch" Width="1" Margin="144,5,147,125" Stroke="Black" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5" >
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="89.581"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+                        <Button x:Name="button_TrackFeaturePoints" Content="Create reference"  Click="ScanFeatures_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="28" Margin="10,179,0,0" Grid.Column="1"/>
+                        <Button x:Name="button_Annotate" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="25" Margin="10,325,0,0" Grid.Column="1"/>
+                        <Button x:Name="button_Scan" Content="Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="65" Height="28" Grid.Column="1"/>
+                        <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="100" Height="25" Grid.Column="1"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="3D Space">
@@ -98,7 +116,7 @@
                             <ColumnDefinition Width="115*"/>
                             <ColumnDefinition Width="174*"/>
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="label_Cycsle" Content="Rotation around origin:" FontSize="12" HorizontalAlignment="Left" Margin="5,302,0,0" VerticalAlignment="Top" Height="32" Width="172" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_RotationDescription" Content="Rotation around origin:" FontSize="12" HorizontalAlignment="Left" Margin="5,302,0,0" VerticalAlignment="Top" Height="32" Width="172" Grid.ColumnSpan="2"/>
                         <Button x:Name="button_rotateRight" Content="right"  Click="RotateRight_Click" HorizontalAlignment="Left" Margin="67,334,0,0" VerticalAlignment="Top" Width="55" Height="21" Grid.ColumnSpan="2"/>
                         <Button x:Name="button_rotateLeft" Content="left"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="11,334,0,0" VerticalAlignment="Top" Width="51" Height="21"/>
                     </Grid>

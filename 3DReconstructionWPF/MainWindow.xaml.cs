@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Windows;
-
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Controls;
 using System.Windows.Media.Media3D;
+using System.Windows.Media.Imaging;
+
 using Microsoft.Kinect;
+
 using _3DReconstructionWPF.GUI;
 using _3DReconstructionWPF.FrameKinectView;
 using _3DReconstructionWPF.Computation;
-
-using System.Windows.Media;
 using _3DReconstructionWPF.Data;
-using System.Windows.Input;
+
 
 namespace _3DReconstructionWPF
 {
@@ -52,12 +54,14 @@ namespace _3DReconstructionWPF
         private Point3DCollection _readingFeatures;
         private Point3DCollection _referenceFeatures;
 
+        private ProcessingStage _processingStage;
+
         private int _cycleRuns = 0;
         private float _rotateValue = 5;
         private float _scale = 0.2f;
-        private float _transformSizeValue = 1f;
         private bool _leftButtonDown = false;
 
+      
 
 
         public MainWindow()
@@ -65,6 +69,7 @@ namespace _3DReconstructionWPF
             Init();
             SetupCurrentDisplay(DEFAULT_FRAMETYPE);
 
+            
             /// TEST ///
             //ExecuteTests();
         }
@@ -142,7 +147,11 @@ namespace _3DReconstructionWPF
 
             if (_sensor != null) { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
 
-
+            // Initialize images
+            _processingStage = new ProcessingStage(label_Status, 
+                new BitmapImage( new Uri("pack://application:,,,/3DReconstructionWPF;component/Assets/Images/icons8-crossmark.png")), 
+                new BitmapImage( new Uri("pack://application:,,,/3DReconstructionWPF;component/Assets/Images/icons8-checkmark.png")),
+                image_trackedFeature, image_rgbColor, image_depth);
         }
 
 
@@ -334,6 +343,10 @@ namespace _3DReconstructionWPF
             Log.writeLog("ANNOTATION NOT YET IMPLEMENTED");
             //AnnotationHandler.Annotate(_annotation);
             //AnimationStoryboard.Storyboard.Pause(this);
+
+            _processingStage.CompleteProcessingStage(ProcessingStage.Description.FeatureDetection);
+            _processingStage.CompleteProcessingStage(ProcessingStage.Description.RGBColorStream);
+            _processingStage.CompleteProcessingStage(ProcessingStage.Description.DepthStream);
 
             Point3DCollection A = new Point3DCollection();
             Point3DCollection B = new Point3DCollection();
