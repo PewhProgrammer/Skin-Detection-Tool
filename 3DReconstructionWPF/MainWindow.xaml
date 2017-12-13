@@ -18,7 +18,7 @@
 
 
         <DockPanel Margin="27,0,5,0"  Background="DarkSlateGray" Grid.Column="1" />
-        <Grid HorizontalAlignment="Left" Background="GhostWhite" Height="417" Margin="40,175,0,0" VerticalAlignment="Top" Width="302" Grid.Column="1"/>
+        <Grid HorizontalAlignment="Left" Background="GhostWhite" Height="421" Margin="44,175,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
 
 
 
@@ -79,7 +79,7 @@
        VerticalAlignment="Top"  
        Width="306"  
        Height="741" Margin="40,1,0,0" Grid.Column="1">
-            <TabControl x:Name="tabControl" Margin="1,171,-1,141">
+            <TabControl x:Name="tabControl" Margin="1,171,0,141">
                 <TabItem Header="Action">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -87,14 +87,14 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Label x:Name="label_StatusDescription" Content="Status:" FontSize="12" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
-                        <Label x:Name="label_Status" Content="refreshing..." FontSize="12" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_Status" Content="refreshing..." FontSize="12" HorizontalAlignment="Left" Margin="10,124,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
                         <Label x:Name="label_StatusTrackedFeature" Content="Feature Detection"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,36,0,0" VerticalAlignment="Top" Height="24" Width="91" Grid.ColumnSpan="2"/>
                         <Label x:Name="label_StatusRGBColor" Content="RGBColor"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,62,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
                         <Label x:Name="label_StatusDepth" Content="Depth"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,88,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
                         <Image x:Name="image_trackedFeature"  Margin="16,39,255,336"  Grid.ColumnSpan="2" />
                         <Image x:Name="image_rgbColor"  Margin="16,65,255,310"  Grid.ColumnSpan="2" />
                         <Image x:Name="image_depth"  Margin="16,91,255,284"  Grid.ColumnSpan="2" />
-                        <Rectangle  VerticalAlignment="Stretch" Width="1" Margin="144,5,147,125" Stroke="Black" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5" >
+                        <Rectangle  VerticalAlignment="Stretch" Width="1" Margin="145,18,145,112" Stroke="Black" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5" >
                             <Rectangle.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform/>
@@ -140,14 +140,14 @@
         <Label x:Name="label_Established" Content="Established PC" Foreground="BlueViolet"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,47,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
 
 
-        <TextBox  Background="#a8a497"  x:Name="textBox" HorizontalAlignment="Left" Height="142" Margin="40,597,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="302" Grid.Column="1"/>
+        <TextBox  Background="#a8a497"  x:Name="textBox" HorizontalAlignment="Left" Height="139" Margin="44,599,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="299" Grid.Column="1"/>
         <Border  
            BorderThickness="4"  
            BorderBrush="Black"  
            HorizontalAlignment="Left"  
            VerticalAlignment="Top"  
            Width="306"  
-           Height="149" Margin="40,593,0,0" Grid.Column="1"/>
+           Height="146" Margin="40,596,0,0" Grid.Column="1"/>
 
 
 

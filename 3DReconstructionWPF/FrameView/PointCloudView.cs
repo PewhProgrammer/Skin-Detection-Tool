@@ -60,7 +60,7 @@ namespace _3DReconstructionWPF.FrameKinectView
 
 
                 sensor.Open();
-
+                
             }
         }
 
@@ -266,14 +266,13 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
-
-
-                                Point3DCollection result = new Point3DCollection();
-
-                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(handLeft.Position));
-                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position));
-                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position));
-                                result.Add(Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position));
+                                Point3DCollection result = new Point3DCollection
+                                {
+                                    Parser3DPoint.FromCameraSpaceToPoint3D(handLeft.Position),
+                                    Parser3DPoint.FromCameraSpaceToPoint3D(tipLeft.Position),
+                                    Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position),
+                                    Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position)
+                                };
 
                                 /*Point3DCollection collection = Parser3DPoint.GetPopulatedPointCloud(
                                 Parser3DPoint.FromCameraSpaceToPoint3D(thumbLeft.Position)
