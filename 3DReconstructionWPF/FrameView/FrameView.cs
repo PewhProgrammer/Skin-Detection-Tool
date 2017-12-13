@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Kinect;
 
+using _3DReconstructionWPF.Data;
+
 namespace _3DReconstructionWPF.FrameKinectView
 {
 
@@ -18,5 +20,7 @@ namespace _3DReconstructionWPF.FrameKinectView
         abstract public void MainPage_Unloaded(object sender, RoutedEventArgs e);
 
         abstract public void MainPage_Loaded(object sender, RoutedEventArgs e);
+
+        abstract public void SetProcessingStage(ProcessingStage processingStage);
     }
 }

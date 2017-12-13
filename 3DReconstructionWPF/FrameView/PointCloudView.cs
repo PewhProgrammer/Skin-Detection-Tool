@@ -21,6 +21,7 @@ namespace _3DReconstructionWPF.FrameKinectView
         private CoordinateMapper cM;
         private Renderer renderer;
         public BVH _bvh { get; set; }
+        public ProcessingStage _processingStage;
 
         public PointCloudView(Renderer rend)
         {
@@ -321,6 +322,11 @@ namespace _3DReconstructionWPF.FrameKinectView
             }
 
             return null;
+        }
+
+        public override void SetProcessingStage(ProcessingStage processingStage)
+        {
+            _processingStage = processingStage;
         }
     }
 }

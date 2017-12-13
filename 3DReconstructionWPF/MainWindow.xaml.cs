@@ -83,6 +83,7 @@ namespace _3DReconstructionWPF
                     break;
                 case FrameType.Color:
                     _rgbv = new ColorView(FrameDisplayImage, _renderer);
+                    _rgbv.SetProcessingStage(_processingStage);
                     AddDisplay(_rgbv);
                     break;
                 case FrameType.BodyMask:
@@ -125,6 +126,13 @@ namespace _3DReconstructionWPF
             InitializeComponent();
             Log.initLog(textBox);
 
+
+            // Initialize images
+            _processingStage = new ProcessingStage(label_Status,
+                new BitmapImage(new Uri("pack://application:,,,/3DReconstructionWPF;component/Assets/Images/icons8-crossmark.png")),
+                new BitmapImage(new Uri("pack://application:,,,/3DReconstructionWPF;component/Assets/Images/icons8-checkmark.png")),
+                image_trackedFeature, image_rgbColor, image_depth);
+
             _renderer = new Renderer(group);
             _pcv = new PointCloudView(_renderer);
 
@@ -146,16 +154,11 @@ namespace _3DReconstructionWPF
             label_Cycle.Content = "cycle: " + _cycleRuns;
 
             if (_sensor != null) { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
-
-            // Initialize images
-            _processingStage = new ProcessingStage(label_Status, 
-                new BitmapImage( new Uri("pack://application:,,,/3DReconstructionWPF;component/Assets/Images/icons8-crossmark.png")), 
-                new BitmapImage( new Uri("pack://application:,,,/3DReconstructionWPF;component/Assets/Images/icons8-checkmark.png")),
-                image_trackedFeature, image_rgbColor, image_depth);
         }
 
 
-        private void ScanFeatures_Click(object sender, RoutedEventArgs e)
+        
+        private void CreateSkeleton_Click(object sender, RoutedEventArgs e)
         {
 
             var k = group.Children.Count;
@@ -175,9 +178,8 @@ namespace _3DReconstructionWPF
             //maintain most important feature point;
             //_thumbReference = _readingFeatures[0];
 
-
-
             _renderer.CreatePointCloud(_displayPointCloud, Brushes.White, false);
+            _processingStage.CompleteProcessingStage(ProcessingStage.Description.SkeletonArm);
         }
 
         private void StartScan_Click(object sender, RoutedEventArgs e)
@@ -233,9 +235,12 @@ namespace _3DReconstructionWPF
             _initialTransformation = Util.ComputeInitialTransformation(_readingFeatures, _referenceFeatures);
             _reading = Parser3DPoint.FromDataPointsToPoint3DCollection( ICP.ApplyTransformation(_initialTransformation, Parser3DPoint.FromPoint3DToDataPoints(_reading)));
 
+            ComputeRMSE(_referenceFeatures, _readingFeatures, _initialTransformation);
 
             _renderer.CreatePointCloud(_referenceFeatures, Brushes.Pink, false, 0.0125f);
-            _renderer.CreatePointCloud(_readingFeatures, Brushes.Gold, false, 0.0125f);
+            _renderer.CreatePointCloud(_readingFeatures, Brushes.YellowGreen, false, 0.0125f);
+
+            _renderer.CreatePointCloud(_reading, Brushes.BlueViolet, false, 0.0025f);
 
             // _renderer.CreatePointCloud(_reading, Brushes.Violet,false);
 
@@ -345,8 +350,7 @@ namespace _3DReconstructionWPF
             //AnimationStoryboard.Storyboard.Pause(this);
 
             _processingStage.CompleteProcessingStage(ProcessingStage.Description.FeatureDetection);
-            _processingStage.CompleteProcessingStage(ProcessingStage.Description.RGBColorStream);
-            _processingStage.CompleteProcessingStage(ProcessingStage.Description.DepthStream);
+            _processingStage.CompleteProcessingStage(ProcessingStage.Description.KinectStream);
 
             Point3DCollection A = new Point3DCollection();
             Point3DCollection B = new Point3DCollection();
@@ -383,8 +387,6 @@ namespace _3DReconstructionWPF
             var transform = Util.ComputeInitialTransformation(A, B);
 
             var err = ComputeRMSE(A, B, transform);
-            if (err > 0.01f) Log.writeLog("Error derivation is too high: " + err);
-            else Log.writeLog("Error derivation is correct: " + err);
         }
 
         private double ComputeRMSE(Point3DCollection A, Point3DCollection B, pointmatcher.net.EuclideanTransform transform)
@@ -397,10 +399,13 @@ namespace _3DReconstructionWPF
                 var convertK = new Point3D(k.X, k.Y, k.Z);
                 var error = B[i] - convertK;
                 sum += Vector3D.DotProduct(error, error);
-
             }
 
-            return Math.Sqrt(sum / A.Count);
+            var err = Math.Sqrt(sum / A.Count);
+            if (err > 0.01f) Log.writeLog("Error derivation is too high: " + err);
+            else Log.writeLog("Error derivation is correct: " + err);
+
+            return err;
         }
 
 
@@ -455,6 +460,14 @@ namespace _3DReconstructionWPF
             Log.writeLog("camera: " + camera.Position);
             Log.writeLog("" + e.Delta);
             */
+        }
+
+        private void Log_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            textBox.Focus();
+            textBox.CaretIndex = textBox.Text.Length;
+            textBox.ScrollToEnd();
         }
     }
 }

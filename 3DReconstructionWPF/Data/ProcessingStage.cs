@@ -12,8 +12,8 @@ namespace _3DReconstructionWPF.Data
         public enum Description
         {
             FeatureDetection,
-            RGBColorStream,
-            DepthStream
+            KinectStream,
+            SkeletonArm
         }
 
         private Dictionary<ProcessingStage.Description, bool> _data;
@@ -22,16 +22,17 @@ namespace _3DReconstructionWPF.Data
         private ImageSource _tick;
         private List<Image> _images;
 
-        public ProcessingStage(Label l, ImageSource cross,ImageSource tick, Image feature, Image rgb, Image depth)
+        public ProcessingStage(Label l, ImageSource cross,ImageSource tick, Image feature, Image kinect, Image skeleton)
         {
             _cross = cross;
             _tick = tick;
 
-            _images = new List<Image>();
-            _images.Add(feature);
-            _images.Add(rgb);
-            _images.Add(depth);
-
+            _images = new List<Image>
+            {
+                feature,
+                kinect,
+                skeleton
+            };
             foreach (var el in _images)
                 el.Source = _cross;
 
@@ -39,8 +40,8 @@ namespace _3DReconstructionWPF.Data
             _data = new Dictionary<Description, bool>
             {
                 [ProcessingStage.Description.FeatureDetection] = false,
-                [ProcessingStage.Description.RGBColorStream] = false,
-                [ProcessingStage.Description.DepthStream] = false
+                [ProcessingStage.Description.KinectStream] = false,
+                [ProcessingStage.Description.SkeletonArm] = false
             };
 
             

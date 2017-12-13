@@ -109,17 +109,13 @@ namespace _3DReconstructionWPF.Computation
                 if (p.X < xMin) xMin = p.X;
                 if (p.Y < yMin) yMin = p.Y;
                 if (p.Z < zMin) zMin = p.Z;
-
-                
-
-
                 //Log.writeLog("found point: (" + p.X + ", " + p.Y + ", " + p.Z + ")");
             }
 
             //max reaches until 5
-            Log.writeLog("Max Pointcloud Points: (" + xMax + ", " + yMax + ", " + zMax + ")");
+            Log.writeLog("Max. Points: (" + Math.Round(xMax,2) + ", " + Math.Round(yMax, 2) + ", " + Math.Round(zMax, 2) + ")");
             //min reaches until - inifinity
-            Log.writeLog("Min Pointcloud Points: (" + xMin + ", " + yMin + ", " + zMin + ")");
+            Log.writeLog("Min. Points: (" + Math.Round(xMin, 2) + ", " + Math.Round(yMin, 2) + ", " + Math.Round(zMin, 2) + ")");
             return points;
         }
 

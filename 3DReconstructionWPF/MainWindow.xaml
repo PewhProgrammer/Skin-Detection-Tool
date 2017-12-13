@@ -5,31 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_3DReconstructionWPF"
         mc:Ignorable="d"
-        Title="3D Scanner for on-skin interaction"     ResizeMode="NoResize"
+        Title="3D Scanner for on-skin interaction"
     WindowStartupLocation="CenterScreen" 
     Width="1366" Height="768"
-    WindowState="Maximized" >
+    >
 
-    <Grid MouseWheel="Grid_MouseWheel" Background="DarkSlateGray" Margin="0,0,-2,-3">
+
+
+    <Grid MouseWheel="Grid_MouseWheel" Background="DarkSlateGray" Margin="0,0,-2,-5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="469*"/>
-            <ColumnDefinition Width="166*"/>
+            <ColumnDefinition Width="127*"/>
+            <ColumnDefinition Width="43*"/>
         </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        <DockPanel Margin="27,0,5,0"  Background="DarkSlateGray" Grid.Column="1" />
-        <Grid HorizontalAlignment="Left" Background="GhostWhite" Height="421" Margin="44,175,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
-
-
-
-        <Border  MouseLeftButtonDown="OnDragSourceMouseLeftButtonDown" 
+        <Border Grid.Row="0" Grid.Column="0" MouseLeftButtonDown="OnDragSourceMouseLeftButtonDown" 
                    MouseLeftButtonUp="OnDragSourceMouseLeftButtonUp" 
                    MouseMove="OnDragSourceMouseMove"
                            Background="Black"
                    HorizontalAlignment="Left"  
                    VerticalAlignment="Top"  
-                   Width="1032"  
-                 Height="742" Grid.ColumnSpan="2">
+                   Width="1012"  
+                 Height="742" Margin="0,1,0,-1">
 
             <Viewport3D x:Name="viewport" Margin="9" >
                 <Viewport3D.Camera>
@@ -55,10 +55,14 @@
         </Border>
 
 
+        <DockPanel Margin="27,0,5,0"  Background="DarkSlateGray" Grid.Column="1" />
+        <Grid HorizontalAlignment="Left" Background="GhostWhite" Height="421" Margin="44,175,0,0" VerticalAlignment="Top" Width="298" Grid.Column="1"/>
+
+
+
 
 
         <Border  
-
            BorderBrush="DarkBlue"  
                    Background="Black"
            HorizontalAlignment="Left"  
@@ -66,7 +70,7 @@
            Width="299"  
            Height="174" Margin="44,1,0,0" Grid.Column="1">
 
-            <Image x:Name="FrameDisplayImage" Grid.Row="1" 
+            <Image x:Name="FrameDisplayImage" 
                 Stretch="Uniform" Margin="-8,-8,0,0"/>
         </Border>
 
@@ -78,7 +82,7 @@
        HorizontalAlignment="Left"  
        VerticalAlignment="Top"  
        Width="306"  
-       Height="741" Margin="40,1,0,0" Grid.Column="1">
+       Height="741" Margin="40,1,-2,0" Grid.Column="1">
             <TabControl x:Name="tabControl" Margin="1,171,0,141">
                 <TabItem Header="Action">
                     <Grid>
@@ -88,11 +92,11 @@
                         </Grid.ColumnDefinitions>
                         <Label x:Name="label_StatusDescription" Content="Status:" FontSize="12" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
                         <Label x:Name="label_Status" Content="refreshing..." FontSize="12" HorizontalAlignment="Left" Margin="10,124,0,0" VerticalAlignment="Top" Height="32" Width="74" Grid.ColumnSpan="2"/>
-                        <Label x:Name="label_StatusTrackedFeature" Content="Feature Detection"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,36,0,0" VerticalAlignment="Top" Height="24" Width="91" Grid.ColumnSpan="2"/>
-                        <Label x:Name="label_StatusRGBColor" Content="RGBColor"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,62,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
-                        <Label x:Name="label_StatusDepth" Content="Depth"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,88,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
-                        <Image x:Name="image_trackedFeature"  Margin="16,39,255,336"  Grid.ColumnSpan="2" />
-                        <Image x:Name="image_rgbColor"  Margin="16,65,255,310"  Grid.ColumnSpan="2" />
+                        <Label x:Name="label_StatusTrackedFeature" Content="Feature Detection"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,60,0,0" VerticalAlignment="Top" Height="24" Width="91" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_StatusRGBColor" Content="RGBColor - Depth Stream"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,36,0,0" VerticalAlignment="Top" Height="24" Width="125" Grid.ColumnSpan="2"/>
+                        <Label x:Name="label_StatusDepth" Content="Arm skeleton"  FontWeight="DemiBold" FontSize="10" HorizontalAlignment="Left" Margin="34,88,0,0" VerticalAlignment="Top" Height="24" Width="84" Grid.ColumnSpan="2"/>
+                        <Image x:Name="image_trackedFeature"  Margin="16,65,255,310"  Grid.ColumnSpan="2" />
+                        <Image x:Name="image_rgbColor"  Margin="16,39,255,336"  Grid.ColumnSpan="2" />
                         <Image x:Name="image_depth"  Margin="16,91,255,284"  Grid.ColumnSpan="2" />
                         <Rectangle  VerticalAlignment="Stretch" Width="1" Margin="145,18,145,112" Stroke="Black" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5" >
                             <Rectangle.RenderTransform>
@@ -104,9 +108,9 @@
                                 </TransformGroup>
                             </Rectangle.RenderTransform>
                         </Rectangle>
-                        <Button x:Name="button_TrackFeaturePoints" Content="Create reference"  Click="ScanFeatures_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="28" Margin="10,179,0,0" Grid.Column="1"/>
+                        <Button x:Name="button_TrackFeaturePoints" Content="Create skeleton"  Click="CreateSkeleton_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="100" Height="28" Margin="10,179,0,0" Grid.Column="1"/>
                         <Button x:Name="button_Annotate" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="25" Margin="10,325,0,0" Grid.Column="1"/>
-                        <Button x:Name="button_Scan" Content="Scan"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="65" Height="28" Grid.Column="1"/>
+                        <Button x:Name="button_Scan" Content="Scan readings"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="100" Height="28" Grid.Column="1"/>
                         <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="100" Height="25" Grid.Column="1"/>
                     </Grid>
                 </TabItem>
@@ -134,23 +138,26 @@
         </Border>
 
 
-        <Label x:Name="label_Cycle" Content="" Foreground="Yellow"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="790,503,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
-        <Label x:Name="label_Reference" Content="Reference PC" Foreground="AntiqueWhite"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,10,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
-        <Label x:Name="label_Pending" Content="Pending PC" Foreground="YellowGreen"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,29,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
-        <Label x:Name="label_Established" Content="Established PC" Foreground="BlueViolet"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="834,47,0,0" VerticalAlignment="Top" Height="32" Width="120" Grid.ColumnSpan="2"/>
+        <Label x:Name="label_Cycle" Content="" Foreground="Yellow"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="886,564,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
+        <Label x:Name="label_Reference" Content="Reference PC" Foreground="AntiqueWhite"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="886,11,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
+        <Label x:Name="label_Pending" Content="Pending PC" Foreground="YellowGreen"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="886,29,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
+        <Label x:Name="label_Established" Content="Established PC" Foreground="BlueViolet"  FontSize="12" FontWeight="DemiBold" HorizontalAlignment="Left" Margin="886,48,0,0" VerticalAlignment="Top" Height="32" Width="120"/>
 
 
-        <TextBox  Background="#a8a497"  x:Name="textBox" HorizontalAlignment="Left" Height="139" Margin="44,599,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="299" Grid.Column="1"/>
+        <TextBox  Background="#a8a497" 
+                  x:Name="textBox"
+                  HorizontalAlignment="Left" 
+                  Height="139" Width="299" Margin="44,599,0,0" 
+                  TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"
+                  VerticalAlignment="Top" TextChanged="Log_OnTextChanged"
+                  Grid.Column="1"/>
         <Border  
            BorderThickness="4"  
            BorderBrush="Black"  
            HorizontalAlignment="Left"  
            VerticalAlignment="Top"  
            Width="306"  
-           Height="146" Margin="40,596,0,0" Grid.Column="1"/>
-
-
-
-
+           Height="146" Margin="40,596,-2,0" 
+           Grid.Column="1"/>
     </Grid>
 </Window>

@@ -49,8 +49,10 @@ namespace _3DReconstructionWPF.Computation
 
         public static DataPoints ApplyTransformation(EuclideanTransform eTransform,DataPoints reading)
         {
-            Log.writeLog("Applying Translation: " + eTransform.translation.ToString());
+            /*
+            Log.writeLog("Applying Translation: " + eTransform.translation);
             Log.writeLog("Applying Rotation: " + eTransform.rotation.ToString());
+            */
 
             for (int i = 0; i < reading.points.Length; i++)
             {
@@ -60,7 +62,8 @@ namespace _3DReconstructionWPF.Computation
             return reading;
         }
 
-        public void resetTransform()
+
+        public void ResetTransform()
         {
             transform = new EuclideanTransform();
         }

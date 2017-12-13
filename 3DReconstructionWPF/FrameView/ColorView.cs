@@ -20,6 +20,7 @@ namespace _3DReconstructionWPF.FrameKinectView
 
         private MultiSourceFrameReader _multiSourceFrameReader = null;
         public BVH _bvh;
+        private ProcessingStage _processingStage;
 
         // canvas on top of rgb color stream
         private Canvas _canvas = ((MainWindow)Application.Current.MainWindow).canvas;
@@ -30,6 +31,11 @@ namespace _3DReconstructionWPF.FrameKinectView
         {
             this.frameDisplayImage = FDI;
             _renderer = renderer;
+        }
+
+        public override void SetProcessingStage(ProcessingStage processingStage)
+        {
+            _processingStage = processingStage;
         }
 
         public override void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -75,7 +81,7 @@ namespace _3DReconstructionWPF.FrameKinectView
                 if (coloredFrame != null)
                 {
                    frameDisplayImage.Source = ToBitmap(coloredFrame);
-                    
+                    _processingStage.CompleteProcessingStage(ProcessingStage.Description.KinectStream);
                 }
             }
 
@@ -88,8 +94,6 @@ namespace _3DReconstructionWPF.FrameKinectView
                     byte[] array = new byte[description.Width*description.Height];
 
                     bodyIndexFrame.CopyFrameDataToArray(array);
-
-                    float k = 2; 
                 }
             }
 
@@ -109,6 +113,7 @@ namespace _3DReconstructionWPF.FrameKinectView
                         {
                             if (body.IsTracked)
                             {
+                                _processingStage.CompleteProcessingStage(ProcessingStage.Description.FeatureDetection);
                                 Joint head = body.Joints[JointType.Head];
 
                                 float x = head.Position.X;
@@ -166,6 +171,9 @@ namespace _3DReconstructionWPF.FrameKinectView
 
                                 //Util.DrawPoint(canvas, head);
                                 Util.DrawPoint(_canvas, tipRight);
+
+                                ColorSpacePoint colorPoint = this.sensor.CoordinateMapper.MapCameraPointToColorSpace(handRight.Position);
+                                int offset = 200;
 
                                 handRight = Util.ScaleTo(handRight, _canvas.ActualWidth, _canvas.ActualHeight);
                                 thumbRight = Util.ScaleTo(thumbRight, _canvas.ActualWidth, _canvas.ActualHeight);
