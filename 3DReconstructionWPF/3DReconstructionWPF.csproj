@@ -39,6 +39,7 @@
       <HintPath>..\packages\MathNet.Numerics.3.20.0\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Kinect, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="pointmatcher.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Library\pointmatcher.net\pointmatcher.net\bin\Debug\pointmatcher.net.dll</HintPath>
@@ -77,6 +78,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Computation\BVH.cs" />
+    <Compile Include="Computation\OneEuroFilter.cs" />
     <Compile Include="Computation\Parser3DPoint.cs" />
     <Compile Include="Computation\ICP.cs" />
     <Compile Include="Computation\Util.cs" />
@@ -127,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Library\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Images\icons8-checkmark.png" />

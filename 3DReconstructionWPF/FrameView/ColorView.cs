@@ -151,8 +151,11 @@ namespace _3DReconstructionWPF.FrameKinectView
 
                                 if (_bvh != null)
                                 {
-                                    //Ray ray = new Ray(new Point3D(tipR.X, tipR.Y, tipR.Z), vector);
-                                    Ray ray = new Ray(new Point3D(0,0,0), vector);
+                                    Ray ray = new Ray(new Point3D(tipR.X, tipR.Y, tipR.Z), vector);
+
+                                    // for sphere testing, set origin at zero
+                                    // Ray ray = new Ray(new Point3D(0,0,0), vector);
+
                                     Intersection inter = _bvh.Intersect(ray, float.MaxValue);
                                     if (inter._distance > 0) // Found Intersection
                                     {

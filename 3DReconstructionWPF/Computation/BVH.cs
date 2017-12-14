@@ -40,6 +40,14 @@ namespace _3DReconstructionWPF.Computation
             _root.Add(p);
         }
 
+        public void AddAllToScene(Point3DCollection p)
+        {
+            for(int i= 0, len = p.Count; i < len; i++)
+            {
+                AddToScene(p[i]);
+            }
+        }
+
         public void BuildTree(Node node)
         {
             node._left = new Node();

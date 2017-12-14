@@ -178,6 +178,13 @@ namespace _3DReconstructionWPF
             //maintain most important feature point;
             //_thumbReference = _readingFeatures[0];
 
+
+            // Create BVH out of arm
+            var bvh = new BVH();
+            bvh.AddAllToScene(_displayPointCloud);
+            bvh.InitIndexing();
+            _rgbv._bvh = bvh;
+
             _renderer.CreatePointCloud(_displayPointCloud, Brushes.White, false);
             _processingStage.CompleteProcessingStage(ProcessingStage.Description.SkeletonArm);
         }
@@ -460,6 +467,17 @@ namespace _3DReconstructionWPF
             Log.writeLog("camera: " + camera.Position);
             Log.writeLog("" + e.Delta);
             */
+        }
+
+        private void RaytraceArm_Click(object sender, RoutedEventArgs e)
+        {
+            // Abort if skeleton is not tracked yet
+            if (!_processingStage.GetProcessingStage(ProcessingStage.Description.SkeletonArm)) {
+                Log.writeLog("Build skeleton first");
+                return;
+            }
+
+
         }
 
         private void Log_OnTextChanged(object sender, TextChangedEventArgs e)

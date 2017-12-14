@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DReconstructionWPF", "3DReconstructionWPF\3DReconstructionWPF.csproj", "{50E11DF7-C01B-4BD1-AB21-4E275F01C906}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3DSketchTool", "3DSketchTool\3DSketchTool.csproj", "{CE1E0643-F2E5-437B-8E56-CCE318639155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{50E11DF7-C01B-4BD1-AB21-4E275F01C906}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50E11DF7-C01B-4BD1-AB21-4E275F01C906}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50E11DF7-C01B-4BD1-AB21-4E275F01C906}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE1E0643-F2E5-437B-8E56-CCE318639155}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE1E0643-F2E5-437B-8E56-CCE318639155}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE1E0643-F2E5-437B-8E56-CCE318639155}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE1E0643-F2E5-437B-8E56-CCE318639155}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

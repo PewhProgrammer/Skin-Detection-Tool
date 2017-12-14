@@ -112,6 +112,7 @@
                         <Button x:Name="button_Annotate" Content="Annotate"  Click="Annotate_Click" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="25" Margin="10,325,0,0" Grid.Column="1"/>
                         <Button x:Name="button_Scan" Content="Scan readings"  Click="StartScan_Click" HorizontalAlignment="Left" Margin="10,218,0,0" VerticalAlignment="Top" Width="100" Height="28" Grid.Column="1"/>
                         <Button x:Name="button_Transform" Content="Transform"  Click="Transform_Click" HorizontalAlignment="Left" Margin="10,287,0,0" VerticalAlignment="Top" Width="100" Height="25" Grid.Column="1"/>
+                        <Button x:Name="button_RaytraceArm" Content="Raytrace"  Click="RaytraceArm_Click" HorizontalAlignment="Left" Margin="172,179,0,0" VerticalAlignment="Top" Width="100" Height="25" Grid.Column="1"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="3D Space">
