@@ -83,6 +83,17 @@ namespace _3DReconstructionWPF.Computation
             };
         }
 
+        public static CameraSpacePoint FromPoint3DToCameraSpace(Point3D p)
+        {
+            return new CameraSpacePoint
+            {
+                X = (float)p.X,
+                Y = (float)p.Y,
+                Z = (float)p.Z
+
+            };
+        }
+
         public static Point3DCollection FromCameraSpaceToPoint3DCollection(CameraSpacePoint[] depth2xyz, int size)
         {
             Point3DCollection points = new Point3DCollection();

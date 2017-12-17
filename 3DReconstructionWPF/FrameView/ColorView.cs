@@ -21,6 +21,8 @@ namespace _3DReconstructionWPF.FrameKinectView
         private MultiSourceFrameReader _multiSourceFrameReader = null;
         public BVH _bvh;
         private ProcessingStage _processingStage;
+        private OneEuroFilter _middleTip;
+        private OneEuroFilter _hand;
 
         // canvas on top of rgb color stream
         private Canvas _canvas = ((MainWindow)Application.Current.MainWindow).canvas;
@@ -31,6 +33,7 @@ namespace _3DReconstructionWPF.FrameKinectView
         {
             this.frameDisplayImage = FDI;
             _renderer = renderer;
+
         }
 
         public override void SetProcessingStage(ProcessingStage processingStage)
@@ -137,6 +140,9 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
+                                tipRight.Position = _middleTip.Filter(tipRight.Position);
+                                handRight.Position = _hand.Filter(handRight.Position);
+
 
                                 // canvas ray
                                 var vector = new Vector3D
@@ -176,7 +182,6 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 Util.DrawPoint(_canvas, tipRight);
 
                                 ColorSpacePoint colorPoint = this.sensor.CoordinateMapper.MapCameraPointToColorSpace(handRight.Position);
-                                int offset = 200;
 
                                 handRight = Util.ScaleTo(handRight, _canvas.ActualWidth, _canvas.ActualHeight);
                                 thumbRight = Util.ScaleTo(thumbRight, _canvas.ActualWidth, _canvas.ActualHeight);
@@ -188,7 +193,6 @@ namespace _3DReconstructionWPF.FrameKinectView
                                     Y = tipRight.Position.Y - handRight.Position.Y,
                                     Z = tipRight.Position.Z - handRight.Position.Z
                                 }*10;
-
 
                                 var thumbR = thumbRight.Position;
                                 var thumbRPoint3D = new Point3D(thumbR.X, thumbR.Y, thumbR.Z);
@@ -202,10 +206,6 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 BuildBoundingBoxAroundLeftArm(
                                     Util.ScaleTo(tipLeft, _canvas.ActualWidth, _canvas.ActualHeight),
                                     Util.ScaleTo(elbowLeft, _canvas.ActualWidth, _canvas.ActualHeight));
-
-
-
-
                             }
                         }
                     }

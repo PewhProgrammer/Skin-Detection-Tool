@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Windows.Media.Media3D;
+using pointmatcher.net;
+using Microsoft.Kinect;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,67 +9,136 @@ using System.Threading.Tasks;
 
 namespace _3DReconstructionWPF.Computation
 {
+
+    // Implementation: https://mitsufu.wordpress.com/2012/05/09/lissage-oneeurofilter-implmentation-en-c-et-f/
     public class OneEuroFilter
     {
-        private bool _firstTimeFlag = false;
-        private double _updateRate = 20;
-
-        private double _dcutoff = 20 ;
-        private double _mincutoff = 5;
-        private double _cutoffSlope = 20;
-
-        private LowPassFilter _lowPassFilter;
-
-        public OneEuroFilter()
+        public OneEuroFilter(double minCutoff, double beta)
         {
-            _lowPassFilter = new LowPassFilter();
+            firstTime = true;
+            this.minCutoff = minCutoff;
+            this.beta = beta;
+
+            xFilt = new LowpassFilter();
+            dxFilt = new LowpassFilter();
+            dcutoff = 1;
         }
 
-
-        public double ComputeFilteredValue(double x)
+        public OneEuroFilter(double minCutoff, double beta, double hz)
         {
-            var dx = 0d;
-            if (_firstTimeFlag)
+            firstTime = true;
+            this.minCutoff = minCutoff;
+            this.beta = beta;
+
+            xFilt = new LowpassFilter();
+            dxFilt = new LowpassFilter();
+            dcutoff = 1;
+
+            rate = hz;
+        }
+
+        public OneEuroFilter(double minCutoff, double beta, bool trilinear)
+        {
+            firstTime = true;
+            this.minCutoff = minCutoff;
+            this.beta = beta;
+
+            xFilt = new LowpassFilter();
+            dxFilt = new LowpassFilter();
+            dcutoff = 1;
+
+            if (trilinear)
             {
-                _firstTimeFlag = false;
-                dx = 0;
+                yFilter = new OneEuroFilter(minCutoff, beta);
+                zFilter = new OneEuroFilter(minCutoff, beta);
             }
-            else dx = (x - _lowPassFilter.GetHatXPrev()) * _updateRate;
-
-            var edx = _lowPassFilter.Filter(dx, Alpha(_updateRate, _dcutoff));
-            var cutoff = _mincutoff + _cutoffSlope * Math.Abs(edx);
-            return _lowPassFilter.Filter(x, Alpha(_updateRate, cutoff));
         }
 
-        private double Alpha(double rate, double cutoff)
+        protected bool firstTime;
+        protected double minCutoff;
+        protected double beta;
+        protected LowpassFilter xFilt;
+        protected LowpassFilter dxFilt;
+        protected double dcutoff;
+        protected double rate = 20;
+
+        // this acts as xFilter
+        protected OneEuroFilter yFilter;
+        protected OneEuroFilter zFilter;
+
+        public double MinCutoff
         {
-            var tau = 1.0f / (2 * Math.PI * cutoff);
-            var te = 1.0f / rate;
-            return 1.0f / (1.0f + tau / te);
+            get { return minCutoff; }
+            set { minCutoff = value; }
         }
 
-        private class LowPassFilter
+        public double Beta
         {
-            private bool _firstTimeFlag = false;
-            private double _hatXPrev = 0;
-
-            public double Filter(double x, double alpha)
-            {
-                if (_firstTimeFlag)
-                { _firstTimeFlag = false; _hatXPrev = x; }
-                var hatx = alpha * x + (1 - alpha) * _hatXPrev;
-                _hatXPrev = hatx;
-                return hatx;
-            }
-
-            public double GetHatXPrev()
-            {
-                return _hatXPrev;
-            }
-
-
+            get { return beta; }
+            set { beta = value; }
         }
 
-        
+        public Point3D Filter(Point3D x, double rate)
+        {
+            return new Point3D(Filter(x.X,rate), yFilter.Filter(x.Y, rate), zFilter.Filter(x.Z, rate));
+        }
+
+        public CameraSpacePoint Filter(CameraSpacePoint x)
+        {
+            return Parser3DPoint.FromPoint3DToCameraSpace(Filter(Parser3DPoint.FromCameraSpaceToPoint3D(x), rate));
+        }
+
+        public double Filter(double x, double rate)
+        {
+            double dx = firstTime ? 0 : (x - xFilt.Last()) * rate;
+            if (firstTime)
+            {
+                firstTime = false;
+            }
+
+            var edx = dxFilt.Filter(dx, Alpha(rate, dcutoff));
+            var cutoff = minCutoff + beta * Math.Abs(edx);
+
+            return xFilt.Filter(x, Alpha(rate, cutoff));
+        }
+
+        protected double Alpha(double rate, double cutoff)
+        {
+            var tau = 1.0 / (2 * Math.PI * cutoff);
+            var te = 1.0 / rate;
+            return 1.0 / (1.0 + tau / te);
+        }
+    }
+
+    public class LowpassFilter
+    {
+        public LowpassFilter()
+        {
+            firstTime = true;
+        }
+
+        protected bool firstTime;
+        protected double hatXPrev;
+
+        public double Last()
+        {
+            return hatXPrev;
+        }
+
+        public double Filter(double x, double alpha)
+        {
+            double hatX = 0;
+            if (firstTime)
+            {
+                firstTime = false;
+                hatX = x;
+            }
+            else
+                hatX = alpha * x + (1 - alpha) * hatXPrev;
+
+            hatXPrev = hatX;
+
+            return hatX;
+        }
     }
 }
