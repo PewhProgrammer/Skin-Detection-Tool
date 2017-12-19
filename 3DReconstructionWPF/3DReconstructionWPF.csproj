@@ -85,6 +85,7 @@
     <Compile Include="Data\AnnotationHandler.cs" />
     <Compile Include="Data\AnnotationGroup.cs" />
     <Compile Include="Data\BBox.cs" />
+    <Compile Include="Data\FilterGroup.cs" />
     <Compile Include="Data\ProcessingStage.cs" />
     <Compile Include="Data\Intersection.cs" />
     <Compile Include="Data\Node.cs" />

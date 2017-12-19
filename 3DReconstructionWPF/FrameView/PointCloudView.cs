@@ -143,23 +143,28 @@ namespace _3DReconstructionWPF.FrameKinectView
 
                                 // Find the joints
 
-                                Joint handRight = body.Joints[JointType.HandRight];
                                 Joint thumbRight = body.Joints[JointType.ThumbRight];
+                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];
 
                                 // Tip
                                 Joint tipRight = body.Joints[JointType.HandTipRight];
                                 Joint tipLeft = body.Joints[JointType.HandTipLeft];
 
-
+                                Joint handRight = body.Joints[JointType.HandRight];
                                 Joint handLeft = body.Joints[JointType.HandLeft];
-                                Joint thumbLeft = body.Joints[JointType.ThumbLeft];
-
 
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
                                 // shoulder
                                 shoulderPos = body.Joints[JointType.ShoulderLeft].Position;
+
+
+                                tipLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Fingertip).Filter(tipLeft.Position);
+                                handLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Hand).Filter(handLeft.Position);
+                                thumbLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.ThumbTip).Filter(thumbLeft.Position);
+                                elbowLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Elbow).Filter(elbowLeft.Position);
+
 
                                 //box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(shoulderPos));
                                 box.Extend(Parser3DPoint.FromCameraSpaceToPoint3D(elbowLeft.Position));

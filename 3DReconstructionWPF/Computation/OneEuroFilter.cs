@@ -13,6 +13,20 @@ namespace _3DReconstructionWPF.Computation
     // Implementation: https://mitsufu.wordpress.com/2012/05/09/lissage-oneeurofilter-implmentation-en-c-et-f/
     public class OneEuroFilter
     {
+
+
+        public OneEuroFilter()
+        {
+            dummy = true;
+            firstTime = true;
+            this.minCutoff = 0;
+            this.beta = 0;
+
+            xFilt = new LowpassFilter();
+            dxFilt = new LowpassFilter();
+            dcutoff = 1;
+        }
+
         public OneEuroFilter(double minCutoff, double beta)
         {
             firstTime = true;
@@ -61,6 +75,7 @@ namespace _3DReconstructionWPF.Computation
         protected LowpassFilter dxFilt;
         protected double dcutoff;
         protected double rate = 20;
+        protected bool dummy = false;
 
         // this acts as xFilter
         protected OneEuroFilter yFilter;
@@ -85,6 +100,7 @@ namespace _3DReconstructionWPF.Computation
 
         public CameraSpacePoint Filter(CameraSpacePoint x)
         {
+            if (dummy) return x;
             return Parser3DPoint.FromPoint3DToCameraSpace(Filter(Parser3DPoint.FromCameraSpaceToPoint3D(x), rate));
         }
 

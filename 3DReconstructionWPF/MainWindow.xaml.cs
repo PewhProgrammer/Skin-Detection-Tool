@@ -56,6 +56,8 @@ namespace _3DReconstructionWPF
 
         private ProcessingStage _processingStage;
 
+        private FilterGroup _filters;
+
         private int _cycleRuns = 0;
         private float _rotateValue = 5;
         private float _scale = 0.2f;
@@ -154,6 +156,9 @@ namespace _3DReconstructionWPF
             label_Cycle.Content = "cycle: " + _cycleRuns;
 
             if (_sensor != null) { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
+
+            // Init filters
+            FilterGroup.InitFilters();
         }
 
 
@@ -189,7 +194,7 @@ namespace _3DReconstructionWPF
             _processingStage.CompleteProcessingStage(ProcessingStage.Description.SkeletonArm);
         }
 
-        private void StartScan_Click(object sender, RoutedEventArgs e)
+        private void ScanReading_Click(object sender, RoutedEventArgs e)
         {
 
             // for intersection testing
@@ -478,6 +483,26 @@ namespace _3DReconstructionWPF
             }
 
 
+        }
+
+        private void MinimumCuttoff_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            FilterGroup.ChangeMinimumCutoff((float)slider_minCutoff.Value);
+        }
+
+        private void CutoffSlope_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            FilterGroup.ChangeCutoffSlope((float)slider_cutoffSlope.Value);
+        }
+
+        private void OneEuro_Checked(object sender, RoutedEventArgs e)
+        {
+            FilterGroup.Enabled = true;
+        }
+
+        private void OneEuro_Unchecked(object sender, RoutedEventArgs e)
+        {
+            FilterGroup.Enabled = false;
         }
 
         private void Log_OnTextChanged(object sender, TextChangedEventArgs e)

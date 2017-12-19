@@ -33,6 +33,8 @@ namespace _3DReconstructionWPF.FrameKinectView
         {
             this.frameDisplayImage = FDI;
             _renderer = renderer;
+            _middleTip = new OneEuroFilter(1,0,true);
+            _hand = new OneEuroFilter(1,0,true);
 
         }
 
@@ -140,9 +142,16 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
-                                tipRight.Position = _middleTip.Filter(tipRight.Position);
-                                handRight.Position = _hand.Filter(handRight.Position);
+                                tipRight.Position = FilterGroup.GetFilter(FilterGroup.Description.FingertipRight).Filter(tipRight.Position);
+                                handRight.Position = FilterGroup.GetFilter(FilterGroup.Description.HandRight).Filter(handRight.Position);
 
+
+                                // train the filters
+
+                                tipLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Fingertip).Filter(tipLeft.Position);
+                                handLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Hand).Filter(handLeft.Position);
+                                thumbLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.ThumbTip).Filter(thumbLeft.Position);
+                                elbowLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Elbow).Filter(elbowLeft.Position);
 
                                 // canvas ray
                                 var vector = new Vector3D
@@ -244,5 +253,6 @@ namespace _3DReconstructionWPF.FrameKinectView
 
             return BitmapSource.Create(width, height, 96, 96, format, null, pixels, stride);
         }
+
     }
 }
