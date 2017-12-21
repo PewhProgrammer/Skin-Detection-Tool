@@ -58,7 +58,7 @@ namespace _3DReconstructionWPF.GUI
 
                 AddCubeToMesh(pointCloudMesh, points[i], size); //0.0018 is default
             }
-            Log.writeLog(points.Count + " vertices found");
+            Log.WriteLog(points.Count + " vertices found");
 
             //to update
             pointCloudMesh.Freeze();

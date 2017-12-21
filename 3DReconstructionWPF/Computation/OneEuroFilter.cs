@@ -74,7 +74,7 @@ namespace _3DReconstructionWPF.Computation
         protected LowpassFilter xFilt;
         protected LowpassFilter dxFilt;
         protected double dcutoff;
-        protected double rate = 20;
+        protected double rate = 30;
         protected bool dummy = false;
 
         // this acts as xFilter

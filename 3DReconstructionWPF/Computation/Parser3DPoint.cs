@@ -124,9 +124,9 @@ namespace _3DReconstructionWPF.Computation
             }
 
             //max reaches until 5
-            Log.writeLog("Max. Points: (" + Math.Round(xMax,2) + ", " + Math.Round(yMax, 2) + ", " + Math.Round(zMax, 2) + ")");
+            Log.WriteLog("Max. Points: (" + Math.Round(xMax,2) + ", " + Math.Round(yMax, 2) + ", " + Math.Round(zMax, 2) + ")");
             //min reaches until - inifinity
-            Log.writeLog("Min. Points: (" + Math.Round(xMin, 2) + ", " + Math.Round(yMin, 2) + ", " + Math.Round(zMin, 2) + ")");
+            Log.WriteLog("Min. Points: (" + Math.Round(xMin, 2) + ", " + Math.Round(yMin, 2) + ", " + Math.Round(zMin, 2) + ")");
             return points;
         }
 

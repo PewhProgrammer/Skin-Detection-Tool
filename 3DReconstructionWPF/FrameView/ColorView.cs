@@ -76,6 +76,29 @@ namespace _3DReconstructionWPF.FrameKinectView
             }
         }
 
+        public class Utility
+        {
+            #region Basic Frame Counter
+
+            private static int lastTick;
+            private static int lastFrameRate;
+            private static int frameRate;
+
+            public static int CalculateFrameRate()
+            {
+                if (System.Environment.TickCount - lastTick >= 1000)
+                {
+                    lastFrameRate = frameRate;
+                    frameRate = 0;
+                    lastTick = System.Environment.TickCount;
+                }
+                frameRate++;
+                return lastFrameRate;
+            }
+            #endregion
+
+        }
+
         private void Reader_ColorFrameArrived(object sender, MultiSourceFrameArrivedEventArgs e)
         {
             var reference = e.FrameReference.AcquireFrame();
@@ -85,7 +108,10 @@ namespace _3DReconstructionWPF.FrameKinectView
             {
                 if (coloredFrame != null)
                 {
-                   frameDisplayImage.Source = ToBitmap(coloredFrame);
+
+                    Log.WriteStats(Utility.CalculateFrameRate().ToString(), Log.Stats.FPS);
+
+                    frameDisplayImage.Source = ToBitmap(coloredFrame);
                     _processingStage.CompleteProcessingStage(ProcessingStage.Description.KinectStream);
                 }
             }
@@ -142,27 +168,66 @@ namespace _3DReconstructionWPF.FrameKinectView
                                 // elbow
                                 Joint elbowLeft = body.Joints[JointType.ElbowLeft];
 
-                                tipRight.Position = FilterGroup.GetFilter(FilterGroup.Description.FingertipRight).Filter(tipRight.Position);
-                                handRight.Position = FilterGroup.GetFilter(FilterGroup.Description.HandRight).Filter(handRight.Position);
-
 
                                 // train the filters
 
-                                tipLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Fingertip).Filter(tipLeft.Position);
-                                handLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Hand).Filter(handLeft.Position);
-                                thumbLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.ThumbTip).Filter(thumbLeft.Position);
-                                elbowLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Elbow).Filter(elbowLeft.Position);
+                                if (tipLeft.TrackingState == TrackingState.Inferred) continue;
+                                    tipRight.Position = FilterGroup.GetFilter(FilterGroup.Description.FingertipRight).Filter(tipRight.Position);
+                                    handRight.Position = FilterGroup.GetFilter(FilterGroup.Description.HandRight).Filter(handRight.Position);
 
-                                // canvas ray
-                                var vector = new Vector3D
-                                {
-                                    X = tipRight.Position.X - handRight.Position.X,
-                                    Y = tipRight.Position.Y - handRight.Position.Y,
-                                    Z = tipRight.Position.Z - handRight.Position.Z
-                                };
+                                    tipLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Fingertip).Filter(tipLeft.Position);
+                                    handLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Hand).Filter(handLeft.Position);
+                                    thumbLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.ThumbTip).Filter(thumbLeft.Position);
+                                    elbowLeft.Position = FilterGroup.GetFilter(FilterGroup.Description.Elbow).Filter(elbowLeft.Position);
 
 
-                                var tipR = tipRight.Position;
+                                    // canvas ray
+                                    var vector = new Vector3D
+                                    {
+                                        X = tipRight.Position.X - handRight.Position.X,
+                                        Y = tipRight.Position.Y - handRight.Position.Y,
+                                        Z = tipRight.Position.Z - handRight.Position.Z
+                                    };
+
+
+                                    var tipR = tipRight.Position;
+
+                                    // Refresh Points: standard arm,fingertip and vector
+                                    while (_canvas.Children.Count > 3)
+                                    {
+                                        _canvas.Children.RemoveRange(0, 2);
+                                    }
+
+                                    //Util.DrawPoint(canvas, head);
+                                    Util.DrawPoint(_canvas, tipRight);
+
+                                    ColorSpacePoint colorPoint = this.sensor.CoordinateMapper.MapCameraPointToColorSpace(handRight.Position);
+
+                                    handRight = Util.ScaleTo(handRight, _canvas.ActualWidth, _canvas.ActualHeight);
+                                    thumbRight = Util.ScaleTo(thumbRight, _canvas.ActualWidth, _canvas.ActualHeight);
+                                    tipRight = Util.ScaleTo(tipRight, _canvas.ActualWidth, _canvas.ActualHeight);
+
+                                    vector = new Vector3D
+                                    {
+                                        X = tipRight.Position.X - handRight.Position.X,
+                                        Y = tipRight.Position.Y - handRight.Position.Y,
+                                        Z = tipRight.Position.Z - handRight.Position.Z
+                                    } * 10;
+
+                                    var thumbR = thumbRight.Position;
+                                    var thumbRPoint3D = new Point3D(thumbR.X, thumbR.Y, thumbR.Z);
+
+
+                                    tipR = tipRight.Position;
+                                    var tipRPoint3D = new Point3D(tipR.X, tipR.Y, tipR.Z);
+
+                                    Util.DrawLine(_canvas, tipRPoint3D, tipRPoint3D + vector, Colors.Violet, 2);
+
+                                    BuildBoundingBoxAroundLeftArm(
+                                        Util.ScaleTo(tipLeft, _canvas.ActualWidth, _canvas.ActualHeight),
+                                        Util.ScaleTo(elbowLeft, _canvas.ActualWidth, _canvas.ActualHeight));
+
+                                ///////////////////////// RAYTRACING STARTS HERE /////////////////////
 
                                 if (_bvh != null)
                                 {
@@ -175,46 +240,11 @@ namespace _3DReconstructionWPF.FrameKinectView
                                     if (inter._distance > 0) // Found Intersection
                                     {
                                         //AnnotationHandler.AddIntersectedPoint(inter._ray.GetPoint(inter._distance));
-                                        Log.writeLog("detected Hit on Sphere");
-                                        _renderer.CreatePointCloud(new Point3DCollection(inter._node._objects), Brushes.OrangeRed,false);
+                                        Log.WriteLog("detected Hit on Sphere");
+                                        _renderer.CreatePointCloud(new Point3DCollection(inter._node._objects), Brushes.OrangeRed, false);
                                     }
                                 }
 
-
-                                // Refresh Points
-                                while (_canvas.Children.Count > 10)
-                                {
-                                    _canvas.Children.RemoveRange(0, 2);
-                                }
-
-                                //Util.DrawPoint(canvas, head);
-                                Util.DrawPoint(_canvas, tipRight);
-
-                                ColorSpacePoint colorPoint = this.sensor.CoordinateMapper.MapCameraPointToColorSpace(handRight.Position);
-
-                                handRight = Util.ScaleTo(handRight, _canvas.ActualWidth, _canvas.ActualHeight);
-                                thumbRight = Util.ScaleTo(thumbRight, _canvas.ActualWidth, _canvas.ActualHeight);
-                                tipRight = Util.ScaleTo(tipRight, _canvas.ActualWidth, _canvas.ActualHeight);
-
-                                vector = new Vector3D
-                                {
-                                    X = tipRight.Position.X - handRight.Position.X,
-                                    Y = tipRight.Position.Y - handRight.Position.Y,
-                                    Z = tipRight.Position.Z - handRight.Position.Z
-                                }*10;
-
-                                var thumbR = thumbRight.Position;
-                                var thumbRPoint3D = new Point3D(thumbR.X, thumbR.Y, thumbR.Z);
-
-
-                                tipR = tipRight.Position;
-                                var tipRPoint3D = new Point3D(tipR.X, tipR.Y, tipR.Z);
-
-                                Util.DrawLine(_canvas, tipRPoint3D, tipRPoint3D + vector,Colors.Violet,2);
-
-                                BuildBoundingBoxAroundLeftArm(
-                                    Util.ScaleTo(tipLeft, _canvas.ActualWidth, _canvas.ActualHeight),
-                                    Util.ScaleTo(elbowLeft, _canvas.ActualWidth, _canvas.ActualHeight));
                             }
                         }
                     }

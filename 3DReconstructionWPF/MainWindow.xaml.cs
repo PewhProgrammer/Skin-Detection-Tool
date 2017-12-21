@@ -91,7 +91,7 @@ namespace _3DReconstructionWPF
                 case FrameType.BodyMask:
                     break;
                 default:
-                    Log.writeLog("Display FrameType for Kinect not defined!");
+                    Log.WriteLog("Display FrameType for Kinect not defined!");
                     return;
             }
         }
@@ -112,12 +112,12 @@ namespace _3DReconstructionWPF
             _rgbv._bvh = BVH.InitBVH(points);
 
             Intersection inter = _rgbv._bvh.Intersect(ray, float.MaxValue);
-            if (inter.Hit()) Log.writeLog("Hit detected!!");
+            if (inter.Hit()) Log.WriteLog("Hit detected!!");
 
             Point3DCollection collection = new Point3DCollection(inter._node._objects);
 
             //_renderer.CreatePointCloud(collection, Brushes.White);
-            Log.writeLog("test end");
+            Log.WriteLog("test end");
 
 
             /// TEST END ///
@@ -126,7 +126,7 @@ namespace _3DReconstructionWPF
         private void Init()
         {
             InitializeComponent();
-            Log.initLog(textBox);
+            Log.InitLog(textBox, label_Cycle);
 
 
             // Initialize images
@@ -155,7 +155,7 @@ namespace _3DReconstructionWPF
             _icp = new ICP();
             label_Cycle.Content = "cycle: " + _cycleRuns;
 
-            if (_sensor != null) { if (_sensor.IsOpen && _sensor.IsAvailable) Log.writeLog("Kinect capture data available!"); }
+            if (_sensor != null) { if (_sensor.IsOpen && _sensor.IsAvailable) Log.WriteLog("Kinect capture data available!"); }
 
             // Init filters
             FilterGroup.InitFilters();
@@ -214,7 +214,7 @@ namespace _3DReconstructionWPF
                 };
 
 
-                Log.writeLog("--------------------");
+                Log.WriteLog("--------------------");
 
             /*
             var rotationAngle = 0.707106781187f;
@@ -250,7 +250,10 @@ namespace _3DReconstructionWPF
             ComputeRMSE(_referenceFeatures, _readingFeatures, _initialTransformation);
 
             _renderer.CreatePointCloud(_referenceFeatures, Brushes.Pink, false, 0.0125f);
+            // Transform readingFeatures
             _renderer.CreatePointCloud(_readingFeatures, Brushes.YellowGreen, false, 0.0125f);
+            _readingFeatures = Parser3DPoint.FromDataPointsToPoint3DCollection(ICP.ApplyTransformation(_initialTransformation, Parser3DPoint.FromPoint3DToDataPoints(_readingFeatures)));
+            _renderer.CreatePointCloud(_readingFeatures, Brushes.Violet, false, 0.0125f);
 
             _renderer.CreatePointCloud(_reading, Brushes.BlueViolet, false, 0.0025f);
 
@@ -265,7 +268,7 @@ namespace _3DReconstructionWPF
         {
             if (_reference != null)
                 TransformPC(_readingFeatures, _referenceFeatures);
-            else Log.writeLog("missing reference or pending point data!");
+            else Log.WriteLog("missing reference or pending point data!");
         }
 
 
@@ -299,7 +302,7 @@ namespace _3DReconstructionWPF
         {
             if (!(_sensor.IsOpen && _sensor.IsAvailable))
             {
-                Log.writeLog("Could not establish connection to kinect device. Aborting...");
+                Log.WriteLog("Could not establish connection to kinect device. Aborting...");
                 return false;
             }
             return true;
@@ -352,12 +355,12 @@ namespace _3DReconstructionWPF
                     file.WriteLine(p.ToString());
                 }
             }
-            Log.writeLog("Saved the point cloud");
+            Log.WriteLog("Saved the point cloud");
         }
 
         private void Annotate_Click(object sender, RoutedEventArgs e)
         {
-            Log.writeLog("ANNOTATION NOT YET IMPLEMENTED");
+            Log.WriteLog("ANNOTATION NOT YET IMPLEMENTED");
             //AnnotationHandler.Annotate(_annotation);
             //AnimationStoryboard.Storyboard.Pause(this);
 
@@ -414,8 +417,8 @@ namespace _3DReconstructionWPF
             }
 
             var err = Math.Sqrt(sum / A.Count);
-            if (err > 0.01f) Log.writeLog("Error derivation is too high: " + err);
-            else Log.writeLog("Error derivation is correct: " + err);
+            if (err > 0.01f) Log.WriteLog("Error derivation is too high: " + err);
+            else Log.WriteLog("Error derivation is correct: " + err);
 
             return err;
         }
@@ -478,7 +481,7 @@ namespace _3DReconstructionWPF
         {
             // Abort if skeleton is not tracked yet
             if (!_processingStage.GetProcessingStage(ProcessingStage.Description.SkeletonArm)) {
-                Log.writeLog("Build skeleton first");
+                Log.WriteLog("Build skeleton first");
                 return;
             }
 
