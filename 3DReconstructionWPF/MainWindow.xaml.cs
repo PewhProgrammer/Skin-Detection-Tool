@@ -344,20 +344,6 @@ namespace _3DReconstructionWPF
             viewport.Camera.Transform = cameraRotation;
         }
 
-        private void SavePointCloud_Click(object sender, RoutedEventArgs e)
-        {
-            using (System.IO.StreamWriter file =
-                new System.IO.StreamWriter("pointCloud.txt", true))
-            {
-                for (int i = 0; i < _displayPointCloud.Count; i++)
-                {
-                    Point3D p = _displayPointCloud[i];
-                    file.WriteLine(p.ToString());
-                }
-            }
-            Log.WriteLog("Saved the point cloud");
-        }
-
         private void Annotate_Click(object sender, RoutedEventArgs e)
         {
             Log.WriteLog("ANNOTATION NOT YET IMPLEMENTED");
@@ -506,6 +492,36 @@ namespace _3DReconstructionWPF
         private void OneEuro_Unchecked(object sender, RoutedEventArgs e)
         {
             FilterGroup.Enabled = false;
+        }
+
+        private void SavePointCloud_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter("pointCloud.txt", true))
+            {
+                for (int i = 0; i < _displayPointCloud.Count; i++)
+                {
+                    Point3D p = _displayPointCloud[i];
+                    file.WriteLine(p.ToString());
+                }
+            }
+            Log.WriteLog("Saved the point cloud");
+        }
+
+        private void ExportToObj_Click(object sender, RoutedEventArgs e)
+        {
+            using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter("../../assets/models/skeleton.stl", false))
+            {
+                file.WriteLine("# List of geometric vertices, with (x,y,z[,w]) coordinates, w is optional and defaults to 1.0. ");
+                for (int i = 0; i < _displayPointCloud.Count; i++)
+                {
+                    Point3D p = _displayPointCloud[i];
+                    file.WriteLine("v " + p.X + " "+ p.Y + " " + p.Z  + " 1.0");
+                }
+            }
+
+            Log.WriteLog("Successfully exported to .obj @ assets/models/");
         }
 
         private void Log_OnTextChanged(object sender, TextChangedEventArgs e)

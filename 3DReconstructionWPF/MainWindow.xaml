@@ -126,13 +126,23 @@
                         <Button x:Name="button_rotateLeft" Content="left"  Click="RotateLeft_Click" HorizontalAlignment="Left" Margin="11,334,0,0" VerticalAlignment="Top" Width="51" Height="21"/>
                     </Grid>
                 </TabItem>
+                <TabItem Header="Data">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="115*"/>
+                            <ColumnDefinition Width="174*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="button_ExportObj" Content="Export .obj"  Click="ExportToObj_Click" HorizontalAlignment="Left" Margin="43,333,0,0" VerticalAlignment="Top" Width="106" Height="28" Grid.Column="1"/>
+                        <Button x:Name="button_SavePC" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="20,333,0,0" VerticalAlignment="Top" Width="106" Height="28" Grid.ColumnSpan="2"/>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="Config">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="29*"/>
                             <ColumnDefinition Width="44*"/>
                         </Grid.ColumnDefinitions>
-                        <Button x:Name="button_SavePC" Content="Save point cloud"  Click="SavePointCloud_Click" HorizontalAlignment="Left" Margin="10,324,0,0" VerticalAlignment="Top" Width="106" Height="28"/>
+
                         <CheckBox Content="One Euro Filter" IsChecked="True" Checked="OneEuro_Checked" Unchecked="OneEuro_Unchecked" FontSize="12" FontWeight="DemiBold" Margin="86,10,92,363" Grid.ColumnSpan="2"/>
 
 
